@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ViewStub | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/viewstub/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/viewstub/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using ViewStub on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android/"/>
     <updated>2013-04-27T19:30:06+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android</id>
     <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
 
 <!-- more -->

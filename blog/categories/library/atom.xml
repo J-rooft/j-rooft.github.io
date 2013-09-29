@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: library | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/library/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/library/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Git submodules]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/12/16/git-submodules/"/>
+    <link href="http://J-rooft.github.io/blog/2012/12/16/git-submodules/"/>
     <updated>2012-12-16T12:48:53+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/12/16/git-submodules</id>
+    <id>http://J-rooft.github.io/blog/2012/12/16/git-submodules</id>
     <content type="html"><![CDATA[<p>When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it.</p>
 
 <!-- more -->

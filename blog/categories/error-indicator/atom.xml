@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: error indicator | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/error-indicator/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/error-indicator/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Marking Incorrectly Filled Fields in Forms on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
     <updated>2013-01-18T15:19:20+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
     <content type="html"><![CDATA[<p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
 
 <!-- more -->

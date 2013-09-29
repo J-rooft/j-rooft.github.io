@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: books | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/books/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/books/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to start writing for android]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android/"/>
+    <link href="http://J-rooft.github.io/blog/2012/10/22/how-to-start-writing-for-android/"/>
     <updated>2012-10-22T23:27:58+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android</id>
+    <id>http://J-rooft.github.io/blog/2012/10/22/how-to-start-writing-for-android</id>
     <content type="html"><![CDATA[<p>Everyone who wants to write for android have to know Java. XML is used to create resources. Also android native development kit (NDK) allows you to use C/C++. You may say that there are frameworks which we can use to develop android apps without knowing Java. That&rsquo;s true. But this method has some limitations. For example, you will not be able to use the latest available android API right after it was released. This happens because developers of such frameworks need some time to be updated to support new API features.</p>
 
 <p>A good place to start learning android is <a href="http://developer.android.com/training/index.html">training</a> on Android developers site. Android developers is also a good reference site. A good book to learn android is <a href="http://commonsware.com/">The Busy Coder&rsquo;s Guide to Android Development</a> by Mark Murphy. If you buy this book you will receive updates during the next 12 months (usually every month). It&rsquo;s good because android is very fast growing platform and books that were published a year or more ago is outdated now. Also I&rsquo;ve read a good comments about <a href="http://www.amazon.com/Professional-Android-Application-Development-Guides/dp/1118102274/">Professional Android 4 Application Development</a> by Reto Meier.</p>

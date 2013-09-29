@@ -1,67 +1,67 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://nocturnaldev.com/blog/2012/10/21/foreword/</loc>
+        <loc>http://J-rooft.github.io/blog/2012/10/21/foreword/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android/</loc>
-        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/
-        </loc>
-        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
-    </url>
-    <url>
-        <loc>http://nocturnaldev.com/blog/2012/12/16/git-submodules/</loc>
-        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
-    </url>
-    <url>
-        <loc>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/</loc>
+        <loc>http://J-rooft.github.io/blog/2012/10/22/how-to-start-writing-for-android/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
         <loc>
-            http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/
+            http://J-rooft.github.io/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/
         </loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/</loc>
+        <loc>http://J-rooft.github.io/blog/2012/12/16/git-submodules/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/</loc>
+        <loc>http://J-rooft.github.io/blog/2012/12/18/handling-android-display-rotation/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/</loc>
+        <loc>
+            http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/
+        </loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/</loc>
+        <loc>http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/about-me/</loc>
+        <loc>http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android/</loc>
+        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://J-rooft.github.io/blog/2013/05/28/using-spannable-strings-in-android/</loc>
+        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://J-rooft.github.io/blog/2013/09/01/parcelable-in-pendingintent/</loc>
+        <lastmod>2013-09-29T01:15:31+04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://J-rooft.github.io/about-me/</loc>
         <lastmod>2013-09-29T14:06:00+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/archives/</loc>
+        <loc>http://J-rooft.github.io/blog/archives/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/blog/categories/</loc>
+        <loc>http://J-rooft.github.io/blog/categories/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/</loc>
+        <loc>http://J-rooft.github.io/</loc>
         <lastmod>2013-09-29T01:15:31+04:00</lastmod>
     </url>
     <url>
-        <loc>http://nocturnaldev.com/robots.txt</loc>
+        <loc>http://J-rooft.github.io/robots.txt</loc>
         <lastmod>2013-09-28T23:14:26+04:00</lastmod>
     </url>
 </urlset>

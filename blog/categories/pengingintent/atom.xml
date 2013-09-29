@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: PengingIntent | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/pengingintent/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/pengingintent/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Parcelable in PendingIntent]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/"/>
+    <link href="http://J-rooft.github.io/blog/2013/09/01/parcelable-in-pendingintent/"/>
     <updated>2013-09-01T23:42:35+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent</id>
+    <id>http://J-rooft.github.io/blog/2013/09/01/parcelable-in-pendingintent</id>
     <content type="html"><![CDATA[<p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
 <code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
 <img src="/images/2013/09/01/classnotfoundexception-log.png"></p>

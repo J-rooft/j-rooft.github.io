@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: android | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/android/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/android/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using spannable strings in android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/05/28/using-spannable-strings-in-android/"/>
     <updated>2013-05-28T13:47:52+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android</id>
+    <id>http://J-rooft.github.io/blog/2013/05/28/using-spannable-strings-in-android</id>
     <content type="html"><![CDATA[<p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
 <img class="center" src="/images/2013/05/28/colored.png"></p>
 
@@ -69,9 +69,9 @@ textView.setText(spannableText, BufferType.SPANNABLE);
   
   <entry>
     <title type="html"><![CDATA[Using ViewStub on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android/"/>
     <updated>2013-04-27T19:30:06+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android</id>
     <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
 
 <!-- more -->
@@ -95,9 +95,9 @@ textView.setText(spannableText, BufferType.SPANNABLE);
   
   <entry>
     <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android/"/>
     <updated>2013-02-14T01:35:36+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <id>http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android</id>
     <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
 
 <!-- more -->
@@ -167,9 +167,9 @@ Full source code for the sample app can be found in my <a href="https://github.c
   
   <entry>
     <title type="html"><![CDATA[Marking Incorrectly Filled Fields in Forms on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
     <updated>2013-01-18T15:19:20+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
     <content type="html"><![CDATA[<p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
 
 <!-- more -->
@@ -213,9 +213,9 @@ Android project used in this post can be found in my <a href="https://github.com
   
   <entry>
     <title type="html"><![CDATA[Handling android display rotation]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/"/>
+    <link href="http://J-rooft.github.io/blog/2012/12/18/handling-android-display-rotation/"/>
     <updated>2012-12-18T21:52:39+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation</id>
+    <id>http://J-rooft.github.io/blog/2012/12/18/handling-android-display-rotation</id>
     <content type="html"><![CDATA[<p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
 
 <!-- more -->

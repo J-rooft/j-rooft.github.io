@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,12 +15,12 @@
   
   <entry>
     <title type="html"><![CDATA[Parcelable in PendingIntent]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/"/>
+    <link href="http://J-rooft.github.io/blog/2013/09/01/parcelable-in-pendingintent/"/>
     <updated>2013-09-01T23:42:35+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent</id>
+    <id>http://J-rooft.github.io/blog/2013/09/01/parcelable-in-pendingintent</id>
     <content type="html"><![CDATA[<p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
 <code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
-<img src="http://nocturnaldev.com/images/2013/09/01/classnotfoundexception-log.png"></p>
+<img src="http://J-rooft.github.io/images/2013/09/01/classnotfoundexception-log.png"></p>
 
 <!-- more -->
 
@@ -158,17 +158,17 @@ Android Clock <a href="https://android.googlesource.com/platform/packages/apps/D
   
   <entry>
     <title type="html"><![CDATA[Using spannable strings in android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/05/28/using-spannable-strings-in-android/"/>
     <updated>2013-05-28T13:47:52+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android</id>
+    <id>http://J-rooft.github.io/blog/2013/05/28/using-spannable-strings-in-android</id>
     <content type="html"><![CDATA[<p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/05/28/colored.png"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/05/28/colored.png"></p>
 
 <!-- more -->
 
 
 <p>If you want to change text appearance dynamically then spans are more preferred then html pages. Spannable strings are easy to create and use. We must simply create and assign a span to a part of a string. I&rsquo;ll create an app demonstrating it. Initially on the screen there is a TextView with three buttons. First two buttons change text appearance by using spans and the third button clears any previously created spans.<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/05/28/initial.png"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/05/28/initial.png"></p>
 
 <p>In this app I use only two spans: <a href="http://developer.android.com/reference/android/text/style/ForegroundColorSpan.html">ForegroundColorSpan</a> to make red text and <a href="http://developer.android.com/reference/android/text/style/UnderlineSpan.html">UnderlineSpan</a> to underline text. And of course there are a way more spans you can use. Let me describe some of them:</p>
 
@@ -219,9 +219,9 @@ Android Clock <a href="https://android.googlesource.com/platform/packages/apps/D
   
   <entry>
     <title type="html"><![CDATA[Using ViewStub on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android/"/>
     <updated>2013-04-27T19:30:06+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/04/27/using-viewstub-on-android</id>
     <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
 
 <!-- more -->
@@ -232,10 +232,10 @@ Android Clock <a href="https://android.googlesource.com/platform/packages/apps/D
 <p>Let&rsquo;s create a simple app that uses ViewStub. It will contain a login screen where a user can enter his credentials or skip this step and start using app without authentication.</p>
 
 <p>A login screen initially will have two buttons to skip login and to enter credentials.<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/04/27/initial-screen.png"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/04/27/initial-screen.png"></p>
 
 <p>Once the user presses &ldquo;Enter credentials&rdquo; button a new view inflated from ViewStub will appear. This view contains fields to enter login and password. To make login and password fields visible you need to obtain an instance of ViewStub and call <a href="http://developer.android.com/reference/android/view/ViewStub.html#inflate(">inflate()</a>) on it or change its <a href="http://developer.android.com/reference/android/view/ViewStub.html#setVisibility(int">visibility</a>) to View.VISIBLE.<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/04/27/visible-login-password.png"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/04/27/visible-login-password.png"></p>
 
 <p>So ViewStub is very easy to use component of android. Also it is very cheap to create.</p>
 
@@ -245,9 +245,9 @@ Android Clock <a href="https://android.googlesource.com/platform/packages/apps/D
   
   <entry>
     <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android/"/>
     <updated>2013-02-14T01:35:36+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <id>http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android</id>
     <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
 
 <!-- more -->
@@ -295,7 +295,7 @@ Android plurals stored in string resources as regular strings. In <code>res/valu
 
 <p>Notice that I passed <code>count</code> twice. This because first parameter is used by android to find the right string and the last parameter will replace <code>%d</code> in the second string.
 Now if I run the app and select some lines I got the following:<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/02/13/english-plurals.png" title="Selected items" alt="Selected items"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/02/13/english-plurals.png" title="Selected items" alt="Selected items"></p>
 
 <p>To add plurals for other languages I created <code>strings.xml</code> file in <code>res/values-cs</code> folder which is used for Czech language. According to the <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a> Czech language has 3 categories, so <code>strings.xml</code> must have the following lines:</p>
 
@@ -324,7 +324,7 @@ Now if I run the app and select some lines I got the following:<br/>
 
 <p>Now when device language switched to Czech I got the following:</p>
 
-<div align="center"><img src="http://nocturnaldev.com/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="http://nocturnaldev.com/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="http://nocturnaldev.com/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
+<div align="center"><img src="http://J-rooft.github.io/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="http://J-rooft.github.io/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="http://J-rooft.github.io/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
 
 
 <p><p>
@@ -335,9 +335,9 @@ Full source code for the sample app can be found in my <a href="https://github.c
   
   <entry>
     <title type="html"><![CDATA[Marking Incorrectly Filled Fields in Forms on Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
     <updated>2013-01-18T15:19:20+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
+    <id>http://J-rooft.github.io/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
     <content type="html"><![CDATA[<p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
 
 <!-- more -->
@@ -357,10 +357,10 @@ Full source code for the sample app can be found in my <a href="https://github.c
 
 
 <p>In the code above I set error to 4 views. Take a look at the following a screenshot.<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-default-error-drawables.png" title="'Form with default error drawables'" ></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/01/18/form-with-default-error-drawables.png" title="'Form with default error drawables'" ></p>
 
 <p>As you can see on the screenshot above all 4 views have error indicator but only edittext is able to show error text by default. To allow displaying an error message for other views they must set focusableInTouchMode parameter to true. By doing this you allow the view to get focus and when a user taps on it error message will be shown. You can set this parameter to true in xml by using <a href="http://developer.android.com/reference/android/view/View.html#attr_android:focusableInTouchMode">android:focusableInTouchMode</a> or in code by using <a href="http://developer.android.com/reference/android/view/View.html#setFocusableInTouchMode(boolean">View.setFocusableInTouchMode(boolean)</a>). I prefer to set it to true only when there is an error and set it to false otherwise. This is because in this mode user needs to make 2 taps to change the checked state or press the button: first tap to focus a view and second tap to interact with it.<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-default-error-drawables-focusable.png" title="'Form with default error drawables focusable'" ></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/01/18/form-with-default-error-drawables-focusable.png" title="'Form with default error drawables focusable'" ></p>
 
 <p>Also Android allows us to change error icon. To set custom icon use <a href="http://developer.android.com/reference/android/widget/TextView.html#setError(java.lang.CharSequence,%20android.graphics.drawable.Drawable">TextView.setError(CharSequence, Drawable)</a>) method when setting an error.
 Icon sizes must be 20 x 20 dp size. It is 15 x 15 pixels in ldpi mode, 20 x 20 pixels in mdpi, 30 x 30 pixels in hdpi and 40 x 40 in xhdpi. Lets set an error to one of the views using custom error drawable. To do it I modified the code to set custom drawable to checkbox when calling setError() method:</p>
@@ -382,7 +382,7 @@ Icon sizes must be 20 x 20 dp size. It is 15 x 15 pixels in ldpi mode, 20 x 20 p
 
 <p>Here I set custom error icon to a checkbox. Note that you need to set bounds to your drawable otherwise it will not be drawn.
 Now checkbox has different error indicator:<br/>
-<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-custom-error-drawable.png" title="Form with Custom Error Drawable" alt="Form with Custom Error Drawable"></p>
+<img class="center" src="http://J-rooft.github.io/images/2013/01/18/form-with-custom-error-drawable.png" title="Form with Custom Error Drawable" alt="Form with Custom Error Drawable"></p>
 
 <p>That is how to indicate incorrectly filled fields.
 Android project used in this post can be found in my <a href="https://github.com/J-rooft/android-forms-with-error-indicators">Github repository</a>.</p>
@@ -391,9 +391,9 @@ Android project used in this post can be found in my <a href="https://github.com
   
   <entry>
     <title type="html"><![CDATA[Handling android display rotation]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/"/>
+    <link href="http://J-rooft.github.io/blog/2012/12/18/handling-android-display-rotation/"/>
     <updated>2012-12-18T21:52:39+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation</id>
+    <id>http://J-rooft.github.io/blog/2012/12/18/handling-android-display-rotation</id>
     <content type="html"><![CDATA[<p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
 
 <!-- more -->
@@ -456,9 +456,9 @@ Android project used in this post can be found in my <a href="https://github.com
   
   <entry>
     <title type="html"><![CDATA[Git submodules]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/12/16/git-submodules/"/>
+    <link href="http://J-rooft.github.io/blog/2012/12/16/git-submodules/"/>
     <updated>2012-12-16T12:48:53+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/12/16/git-submodules</id>
+    <id>http://J-rooft.github.io/blog/2012/12/16/git-submodules</id>
     <content type="html"><![CDATA[<p>When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it.</p>
 
 <!-- more -->
@@ -497,15 +497,15 @@ Commit your changes.
 </span></code></pre></td></tr></table></div></figure>
 </li><li>
 And if you are using eclipse just import ActionBarSherlock project.  
-<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import.png" title="'Import project'" >
+<img class="center" src="http://J-rooft.github.io/images/2012/12/16/eclipse-import.png" title="'Import project'" >
 
 Choose &#8220;Existing Android Code Into Workspace&#8221; during import and check the library. There is no need to import ActionBarSherlock samples.  
-<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import-project-1.png" title="'Existing Android code into workspace'" >
+<img class="center" src="http://J-rooft.github.io/images/2012/12/16/eclipse-import-project-1.png" title="'Existing Android code into workspace'" >
 
-<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import-project-2.png" title="'Check library'" >
+<img class="center" src="http://J-rooft.github.io/images/2012/12/16/eclipse-import-project-2.png" title="'Check library'" >
 
 And then tell your project that you want to use ActionBarSherlock as a library.  
-<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-project-properties.png" title="'Project properties'" >
+<img class="center" src="http://J-rooft.github.io/images/2012/12/16/eclipse-project-properties.png" title="'Project properties'" >
 </li>
 </ol>
 
@@ -535,9 +535,9 @@ And then tell your project that you want to use ActionBarSherlock as a library.
   
   <entry>
     <title type="html"><![CDATA[How to use LocalBroadcastManager in Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
     <updated>2012-11-13T00:30:05+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
+    <id>http://J-rooft.github.io/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
     <content type="html"><![CDATA[<p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
 
 <!-- more -->
@@ -684,9 +684,9 @@ The apps on github starting a background service after tapping on a button. This
   
   <entry>
     <title type="html"><![CDATA[How to start writing for android]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android/"/>
+    <link href="http://J-rooft.github.io/blog/2012/10/22/how-to-start-writing-for-android/"/>
     <updated>2012-10-22T23:27:58+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android</id>
+    <id>http://J-rooft.github.io/blog/2012/10/22/how-to-start-writing-for-android</id>
     <content type="html"><![CDATA[<p>Everyone who wants to write for android have to know Java. XML is used to create resources. Also android native development kit (NDK) allows you to use C/C++. You may say that there are frameworks which we can use to develop android apps without knowing Java. That&rsquo;s true. But this method has some limitations. For example, you will not be able to use the latest available android API right after it was released. This happens because developers of such frameworks need some time to be updated to support new API features.</p>
 
 <p>A good place to start learning android is <a href="http://developer.android.com/training/index.html">training</a> on Android developers site. Android developers is also a good reference site. A good book to learn android is <a href="http://commonsware.com/">The Busy Coder&rsquo;s Guide to Android Development</a> by Mark Murphy. If you buy this book you will receive updates during the next 12 months (usually every month). It&rsquo;s good because android is very fast growing platform and books that were published a year or more ago is outdated now. Also I&rsquo;ve read a good comments about <a href="http://www.amazon.com/Professional-Android-Application-Development-Guides/dp/1118102274/">Professional Android 4 Application Development</a> by Reto Meier.</p>
@@ -697,9 +697,9 @@ The apps on github starting a background service after tapping on a button. This
   
   <entry>
     <title type="html"><![CDATA[Foreword]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/10/21/foreword/"/>
+    <link href="http://J-rooft.github.io/blog/2012/10/21/foreword/"/>
     <updated>2012-10-21T16:58:46+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/10/21/foreword</id>
+    <id>http://J-rooft.github.io/blog/2012/10/21/foreword</id>
     <content type="html"><![CDATA[<p>Hi everyone, I&rsquo;m starting a new blog where I&rsquo;m going to tell about different programming topics.</p>
 
 <p>You may ask me why I called this blog &ldquo;Nocturnal Development Blog&rdquo;? I called it this way because it&rsquo;s easier to develop your programs at night. No one can disturb you during this time. This period of time becomes even more important once you get a child. It&rsquo;s like your free time.</p>

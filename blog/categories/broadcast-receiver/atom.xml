@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: broadcast receiver | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/broadcast-receiver/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/broadcast-receiver/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to use LocalBroadcastManager in Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
     <updated>2012-11-13T00:30:05+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
+    <id>http://J-rooft.github.io/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
     <content type="html"><![CDATA[<p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
 
 <!-- more -->

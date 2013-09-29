@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: quantity strings | Nocturnal Development Blog]]></title>
-  <link href="http://nocturnaldev.com/blog/categories/quantity-strings/atom.xml" rel="self"/>
-  <link href="http://nocturnaldev.com/"/>
-  <updated>2013-09-29T14:06:01+04:00</updated>
-  <id>http://nocturnaldev.com/</id>
+  <link href="http://J-rooft.github.io/blog/categories/quantity-strings/atom.xml" rel="self"/>
+  <link href="http://J-rooft.github.io/"/>
+  <updated>2013-09-29T17:55:54+04:00</updated>
+  <id>http://J-rooft.github.io/</id>
   <author>
     <name><![CDATA[Ivan Davletshin]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
-    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <link href="http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android/"/>
     <updated>2013-02-14T01:35:36+04:00</updated>
-    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <id>http://J-rooft.github.io/blog/2013/02/14/using-quantity-strings-in-android</id>
     <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
 
 <!-- more -->

@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://nocturnaldev.com/sitemap.xml 
+Sitemap: http://J-rooft.github.io/sitemap.xml 
