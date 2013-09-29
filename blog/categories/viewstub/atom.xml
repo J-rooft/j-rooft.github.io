@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ViewStub | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/viewstub/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using ViewStub on Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <updated>2013-04-27T19:30:06+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
+
+<!-- more -->
+
+
+<p>As said on android developers site: &ldquo;A ViewStub is an invisible, zero-sized View that can be used to lazily inflate layout resources at runtime&rdquo;. So we can use it to save resources if there is possibility that this view may never be shown. Also ViewStub can be shown later when it needed.</p>
+
+<p>Let&rsquo;s create a simple app that uses ViewStub. It will contain a login screen where a user can enter his credentials or skip this step and start using app without authentication.</p>
+
+<p>A login screen initially will have two buttons to skip login and to enter credentials.<br/>
+<img class="center" src="/images/2013/04/27/initial-screen.png"></p>
+
+<p>Once the user presses &ldquo;Enter credentials&rdquo; button a new view inflated from ViewStub will appear. This view contains fields to enter login and password. To make login and password fields visible you need to obtain an instance of ViewStub and call <a href="http://developer.android.com/reference/android/view/ViewStub.html#inflate(">inflate()</a>) on it or change its <a href="http://developer.android.com/reference/android/view/ViewStub.html#setVisibility(int">visibility</a>) to View.VISIBLE.<br/>
+<img class="center" src="/images/2013/04/27/visible-login-password.png"></p>
+
+<p>So ViewStub is very easy to use component of android. Also it is very cheap to create.</p>
+
+<p>As always source code is freely available on <a href="https://github.com/J-rooft/ViewStub-example">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

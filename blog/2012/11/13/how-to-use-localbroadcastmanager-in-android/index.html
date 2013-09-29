@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How to use LocalBroadcastManager in Android - Nocturnal Development Blog</title>
+  <meta name="author" content="Ivan Davletshin">
+
+  
+  <meta name="description" content="Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nocturnal Development Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44439506-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:nocturnaldev.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Nocturnal Development Blog
+        </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How to Use LocalBroadcastManager in Android</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-13T00:30:05+04:00" pubdate data-updated="true">Nov 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
+
+<!-- more -->
+
+
+<p>To register a receiver we need to specify what actions (events) we will be listening to. Every receiver can listen to one or more actions.</p>
+
+<p>When we send a broadcast a receiver gets an instance of Intent class. Using this intent we can know what kind of action happens (in case we listen to more than one action). Also this intent has convenient key-value storage called Bundle.</p>
+
+<p>Here is a simple example of how to register receiver programmatically and send a broadcast with some text to it. First you need create and register a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// an action to listen</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MESSAGE_SENT_ACTION</span> <span class="o">=</span> <span class="s">&quot;com.nocturnaldev.MESSAGE_RECEIVED_ACTION&quot;</span><span class="o">;</span>
+</span><span class='line'><span class="c1">// key to extract a text from bundle</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MESSAGE_EXTRA</span> <span class="o">=</span> <span class="s">&quot;com.nocturnaldev.MESSAGE_EXTRA&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// make receiver a member variable of a class to be able to unregister it later</span>
+</span><span class='line'><span class="kd">private</span> <span class="n">BroadcastReceiver</span> <span class="n">receiver</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// in onResume() initialize and register this receiver</span>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onResume</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onResume</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">receiver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BroadcastReceiver</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nd">@Override</span>
+</span><span class='line'>        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onReceive</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">Intent</span> <span class="n">intent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">Bundle</span> <span class="n">bundle</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="na">getExtras</span><span class="o">();</span>
+</span><span class='line'>            <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">MESSAGE_EXTRA</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// do something useful with message</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// here we specify MESSAGE_SENT_ACTION as an action </span>
+</span><span class='line'>    <span class="n">registerReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">,</span> <span class="k">new</span> <span class="n">IntentFilter</span><span class="o">(</span><span class="n">MESSAGE_SENT_ACTION</span><span class="o">));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you will be notified when broadcast with aforementioned action will be sent:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Intent</span> <span class="n">broadcastIntent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">();</span>
+</span><span class='line'><span class="n">broadcastIntent</span><span class="o">.</span><span class="na">setAction</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">MESSAGE_SENT_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">broadcastIntent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">MESSAGE_EXTRA</span><span class="o">,</span> <span class="s">&quot;some text&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">sendBroadcast</span><span class="o">(</span><span class="n">broadcastIntent</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>When receiver is no longer needed simply call <code>Context.unregisterReceiver</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onPause</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onPause</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">receiver</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">unregisterReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">receiver</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But this code has some important points. According to <a href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">documentation</a> other applications will be able to listen to your broadcasts and send broadcasts to your app. Also sending broadcasts through global broadcast system is not so efficient as sending them through local one. That is why in support package v4 Google introduced LocalBroadcastManager.</p>
+
+<p>If you send and receive broadcasts only inside your app you may start using it. It&rsquo;s not so hard. Instead of using activity&rsquo;s context (as well as service&rsquo;s, application context and so on) you have to obtain an instance of LocalBroadcastManager and use it to register/unregister receiver as well as send broadcasts. Let&rsquo;s see how to modify the previous program to use LocalBroadcastManager. We only need to change 3 lines of code.</p>
+
+<p>Register a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">registerReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">,</span> <span class="k">new</span> <span class="n">IntentFilter</span><span class="o">(</span><span class="n">MESSAGE_SENT_ACTION</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Send a broadcast:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">sendBroadcast</span><span class="o">(</span><span class="n">broadcastIntent</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Unregister a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">unregisterReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After this changes your app will be using system more effectively.</p>
+
+<p>Full source code of examples in this article can be found on github:<br/>
+1. <a href="https://github.com/J-rooft/BroadcastReceiver-Tutorial">BroadcastReceiver-Tutorial</a><br/>
+2. <a href="https://github.com/J-rooft/LocalBroadcastManager-Example">LocalBroadcastManager-Example</a><br/>
+The apps on github starting a background service after tapping on a button. This service notifies our activity when it starts and finishes (after 3 seconds) via broadcasts.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ivan Davletshin</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-13T00:30:05+04:00" pubdate data-updated="true">Nov 13<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/broadcast/'>broadcast</a>, <a class='category' href='/blog/categories/broadcast-receiver/'>broadcast receiver</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/" data-via="" data-counturl="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/22/how-to-start-writing-for-android/" title="Previous Post: How to start writing for android">&laquo; How to start writing for android</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/16/git-submodules/" title="Next Post: Git submodules">Git submodules &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <div style="margin-top:15px; "><img style="" class="right" src="/images/my-photo.png"/>
+  <p>My name is Ivan Davletshin. I am a software developer who likes what he does. <a href="/about-me">More...</a></p>
+  </div>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using spannable strings in android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/J-rooft">@J-rooft</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'J-rooft',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/102996800827400684904?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - 2013 - <a href="/about-me">Ivan Davletshin</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Hosted on <a href="http://pages.github.com/">GitHub Pages</a> - Theme by <a href="https://github.com/wallace/justin-kelly-theme">Justin Kelly</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nocturnaldev';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/';
+        var disqus_url = 'http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ClassNotFoundException | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/classnotfoundexception/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Parcelable in PendingIntent]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/"/>
+    <updated>2013-09-01T23:42:35+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent</id>
+    <content type="html"><![CDATA[<p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
+<code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
+<img src="/images/2013/09/01/classnotfoundexception-log.png"></p>
+
+<!-- more -->
+
+
+<p>First lets take a look at the code which causes such problems. I created Data class which implements Parcelable interface and has 2 fields. Now I create an instance of this class and fill it with some values.
+``` java
+Data data = new Data();
+data.setInt(1);
+data.setStr(&ldquo;a&rdquo;);
+[/code]
+This data must be stored in PendingIntent for later use in BroadcastReceiver. This is how it can be done:
+[code language=&ldquo;java&rdquo;]
+// create Intent with data needed
+Intent intent = new Intent(BROADCAST_ACTION);
+intent.putExtra(DATA_EXTRA, data);
+intent.setExtrasClassLoader(Data.class.getClassLoader());</p>
+
+<p>// create PendingIntent from this intent and set up alarm
+PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);</p>
+
+<p>AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+am.set(AlarmManager.RTC, System.currentTimeMillis(), pi);
+```</p>
+
+<p>After you run this code in system LogCat there will be an error message:
+``` text
+443-488/system_process E/Parcel: Class not found when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data, e: java.lang.ClassNotFoundException: com.nocturnaldev.parcelableinpendingintent.Data
+443-488/system_process W/Intent: Failure filling in extras</p>
+
+<pre><code>    android.os.BadParcelableException: ClassNotFoundException when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data
+    at android.os.Parcel.readParcelable(Parcel.java:2077)
+    at android.os.Parcel.readValue(Parcel.java:1965)
+    at android.os.Parcel.readMapInternal(Parcel.java:2226)
+    at android.os.Bundle.unparcel(Bundle.java:223)
+    at android.os.Bundle.putAll(Bundle.java:303)
+    at android.content.Intent.fillIn(Intent.java:6248)
+    at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:210)
+    at com.android.server.am.PendingIntentRecord.send(PendingIntentRecord.java:192)
+    at android.app.PendingIntent.send(PendingIntent.java:677)
+    at android.app.PendingIntent.send(PendingIntent.java:631)
+    at com.android.server.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:828)
+</code></pre>
+
+<p>```</p>
+
+<p><a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Source code</a> of android clock has an explanation of why this happens: &ldquo;The AlarmManager adds extra data to this Intent which causes it to inflate. Since the remote process does not know about the Alarm class, it throws a ClassNotFoundException.&rdquo;</p>
+
+<p>Also there is a <a href="https://code.google.com/p/android/issues/detail?id=6822">bug report</a> created for this issue.</p>
+
+<p>Fortunately this problem can be overcome by making byte array from your Parcelable object and passing it to PendingIntent.
+``` java
+// First create Parcel and write your data to it
+Parcel parcel = Parcel.obtain();
+data.writeToParcel(parcel, 0);
+parcel.setDataPosition(0);</p>
+
+<p>// now create Intent and store your parcel in it
+Intent intent = new Intent(BROADCAST_ACTION);
+intent.putExtra(MARSHALLED_DATA_EXTRA, parcel.marshall());</p>
+
+<p>// create PendingIntent from this intent and set up alarm
+PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);</p>
+
+<p>AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+am.set(AlarmManager.RTC, System.currentTimeMillis(), pi);
+```</p>
+
+<p>Later when your alarm will be fired you can extract your data:
+<code>java
+byte[] byteArrayExtra = intent.getByteArrayExtra(MARSHALLED_DATA_EXTRA);
+Parcel parcel = Parcel.obtain();
+parcel.unmarshall(byteArrayExtra, 0, byteArrayExtra.length);
+parcel.setDataPosition(0);
+Data data = Data.CREATOR.createFromParcel(parcel);
+</code></p>
+
+<p>Now there are no more errors and LogCat clean and neat.</p>
+
+<p>As always source code of sample app is available on <a href="https://github.com/J-rooft/Parcelable-In-PendingIntent">GitHub</a>.</p>
+
+<p>Used materials:
+Android Clock <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Alarms</a> and <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/AlarmReceiver.java">AlarmReceiver</a> classes.</p>
+]]></content>
+  </entry>
+  
+</feed>

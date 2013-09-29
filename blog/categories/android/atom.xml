@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: android | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/android/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using spannable strings in android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/"/>
+    <updated>2013-05-28T13:47:52+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android</id>
+    <content type="html"><![CDATA[<p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
+<img class="center" src="/images/2013/05/28/colored.png"></p>
+
+<!-- more -->
+
+
+<p>If you want to change text appearance dynamically then spans are more preferred then html pages. Spannable strings are easy to create and use. We must simply create and assign a span to a part of a string. I&rsquo;ll create an app demonstrating it. Initially on the screen there is a TextView with three buttons. First two buttons change text appearance by using spans and the third button clears any previously created spans.<br/>
+<img class="center" src="/images/2013/05/28/initial.png"></p>
+
+<p>In this app I use only two spans: <a href="http://developer.android.com/reference/android/text/style/ForegroundColorSpan.html">ForegroundColorSpan</a> to make red text and <a href="http://developer.android.com/reference/android/text/style/UnderlineSpan.html">UnderlineSpan</a> to underline text. And of course there are a way more spans you can use. Let me describe some of them:</p>
+
+<ul>
+<li><a href="http://developer.android.com/reference/android/text/style/RelativeSizeSpan.html">RelativeSizeSpan</a> to change text size</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StrikethroughSpan.html">StrikethroughSpan</a> to strike through the text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/URLSpan.html">URLSpan</a> to make URLs in text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/ClickableSpan.html">ClickableSpan</a> to make text clickable (onClick method will be called)</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StyleSpan.html">StyleSpan</a> to make text bold and/or italic</li>
+<li>etc.</li>
+</ul>
+
+
+<p>Other spans can be known by looking at subclasses of <a href="http://developer.android.com/reference/android/text/ParcelableSpan.html">ParcelableSpan</a>.</p>
+
+<p>ClickableSpan and URLSpan require movement method to be set:
+<code>java
+textView.setMovementMethod(LinkMovementMethod.getInstance());
+</code></p>
+
+<p>Spannable text is created by assigning spans to spannable string. So first we must create a string with text that is able to apply spans. Let&rsquo;s use <a href="http://developer.android.com/reference/android/text/SpannableString.html">SpannableString</a> for it:
+<code>java
+String text = "Words in this sentence can be colored in red or underlined.";
+SpannableString spannable = new SpannableString(text);
+</code></p>
+
+<p>Now when we have spannable string we can assign spans to it by calling <a href="http://developer.android.com/reference/android/text/Spannable.html#setSpan(java.lang.Object,%20int,%20int,%20int">Spannable.setSpan(Object span, int start, int end, int flags)</a>) method. First parameter in this method is simply one of spans described earlier. Second and third parameters specify boundaries of span. The last parameter is flag to specify how text should behave when spannable string changes. It is not used for static text and we can set it to 0.</p>
+
+<p>To remove previously added span call <a href="http://developer.android.com/reference/android/text/Spannable.html#removeSpan(java.lang.Object">Spannable.removeSpan(Object span)</a>) on it.</p>
+
+<p>Once spannable string is ready we can assign it to TextView. You must tell TextView that string you created is spannable string:
+<code>java
+textView.setText(spannableText, BufferType.SPANNABLE);
+</code></p>
+
+<p>Spannable strings are simple and easy to use feature that helps you to make your app nicer.</p>
+
+<p>As always app source code is available on <a href="https://github.com/J-rooft/Spannable-Strings">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using ViewStub on Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <updated>2013-04-27T19:30:06+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
+
+<!-- more -->
+
+
+<p>As said on android developers site: &ldquo;A ViewStub is an invisible, zero-sized View that can be used to lazily inflate layout resources at runtime&rdquo;. So we can use it to save resources if there is possibility that this view may never be shown. Also ViewStub can be shown later when it needed.</p>
+
+<p>Let&rsquo;s create a simple app that uses ViewStub. It will contain a login screen where a user can enter his credentials or skip this step and start using app without authentication.</p>
+
+<p>A login screen initially will have two buttons to skip login and to enter credentials.<br/>
+<img class="center" src="/images/2013/04/27/initial-screen.png"></p>
+
+<p>Once the user presses &ldquo;Enter credentials&rdquo; button a new view inflated from ViewStub will appear. This view contains fields to enter login and password. To make login and password fields visible you need to obtain an instance of ViewStub and call <a href="http://developer.android.com/reference/android/view/ViewStub.html#inflate(">inflate()</a>) on it or change its <a href="http://developer.android.com/reference/android/view/ViewStub.html#setVisibility(int">visibility</a>) to View.VISIBLE.<br/>
+<img class="center" src="/images/2013/04/27/visible-login-password.png"></p>
+
+<p>So ViewStub is very easy to use component of android. Also it is very cheap to create.</p>
+
+<p>As always source code is freely available on <a href="https://github.com/J-rooft/ViewStub-example">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <updated>2013-02-14T01:35:36+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
+
+<!-- more -->
+
+
+<p>Android internally uses language plural rules as in this <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a>. According to it tags are used to represent categories. For English language there are 2 tags: <code>one</code> and <code>other</code>.
+To show how plurals work I will create a sample application.
+Android plurals stored in string resources as regular strings. In <code>res/values/stings.xml</code> I added the following lines:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;utf-8&rdquo;?>
+<resources></p>
+
+<pre><code>&lt;!-- ... --&gt;
+
+&lt;plurals name="itemsSelected"&gt;
+    &lt;item quantity="one"&gt;1 item selected&lt;/item&gt;
+    &lt;item quantity="other"&gt;%d items selected&lt;/item&gt;
+&lt;/plurals&gt;
+</code></pre>
+
+<p></resources>
+```</p>
+
+<p>This plurlas can be received via <a href="http://developer.android.com/reference/android/content/res/Resources.html#getQuantityString(int,%20int,%20java.lang.Object...">getResources().getQuantityString (int id, int quantity, Object&hellip; formatArgs)</a>) method. So to get the right string I call this method:</p>
+
+<p>``` java
+private String getSelectedItemsString() {</p>
+
+<pre><code>int count = getListView().getCheckedItemCount();
+return getResources().getQuantityString(R.plurals.itemsSelected, count, count);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Notice that I passed <code>count</code> twice. This because first parameter is used by android to find the right string and the last parameter will replace <code>%d</code> in the second string.
+Now if I run the app and select some lines I got the following:<br/>
+<img class="center" src="/images/2013/02/13/english-plurals.png" title="&lsquo;Selected items&rsquo; &lsquo;Selected items&rsquo;" ></p>
+
+<p>To add plurals for other languages I created <code>strings.xml</code> file in <code>res/values-cs</code> folder which is used for Czech language. According to the <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a> Czech language has 3 categories, so <code>strings.xml</code> must have the following lines:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;utf-8&rdquo;?>
+<resources></p>
+
+<pre><code>&lt;plurals name="itemsSelected"&gt;
+    &lt;item quantity="one"&gt;1 položka vybrána&lt;/item&gt;
+    &lt;item quantity="few"&gt;%d vybrané položky&lt;/item&gt;
+    &lt;item quantity="other"&gt;%d vybraných položek&lt;/item&gt;
+&lt;/plurals&gt;
+</code></pre>
+
+<p></resources>
+```</p>
+
+<p>Now when device language switched to Czech I got the following:</p>
+
+<div align="center"><img src="/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
+
+
+<p><p>
+Quantity strings make it easier to handle rules of different languages. For example in Russian language there are 4 categories. First category is for 1, 21, 31, &hellip; Second category is for 2-4, 22-24, 32-34 and so on. With plurals it&rsquo;s much more easier to translate your apps to different languages.
+Full source code for the sample app can be found in my <a href="https://github.com/J-rooft/Quantity-Strings">Github repository</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Marking Incorrectly Filled Fields in Forms on Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
+    <updated>2013-01-18T15:19:20+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
+    <content type="html"><![CDATA[<p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
+
+<!-- more -->
+
+
+<p>Android TextView and all its subclasses (e.g. Buttons, CheckBoxes) have <a href="http://developer.android.com/reference/android/widget/TextView.html#setError(java.lang.CharSequence">TextView.setError(CharSequence)</a>) method. Use this method when you want to mark a field with incorrect data. Simply call setError() on the view that contains an error.</p>
+
+<p><code>java
+editText.setError(getString(R.string.must_be_filled));
+chbx.setError(getString(R.string.must_be_checked));
+radionBtn.setError(getString(R.string.must_be_checked));
+btn.setError(getString(R.string.unknown_error));
+</code></p>
+
+<p>In the code above I set error to 4 views. Take a look at the following a screenshot.<br/>
+<img class="center" src="/images/2013/01/18/form-with-default-error-drawables.png" title="&lsquo;Form with default error drawables&rsquo;" ></p>
+
+<p>As you can see on the screenshot above all 4 views have error indicator but only edittext is able to show error text by default. To allow displaying an error message for other views they must set focusableInTouchMode parameter to true. By doing this you allow the view to get focus and when a user taps on it error message will be shown. You can set this parameter to true in xml by using <a href="http://developer.android.com/reference/android/view/View.html#attr_android:focusableInTouchMode">android:focusableInTouchMode</a> or in code by using <a href="http://developer.android.com/reference/android/view/View.html#setFocusableInTouchMode(boolean">View.setFocusableInTouchMode(boolean)</a>). I prefer to set it to true only when there is an error and set it to false otherwise. This is because in this mode user needs to make 2 taps to change the checked state or press the button: first tap to focus a view and second tap to interact with it.<br/>
+<img class="center" src="/images/2013/01/18/form-with-default-error-drawables-focusable.png" title="&lsquo;Form with default error drawables focusable&rsquo;" ></p>
+
+<p>Also Android allows us to change error icon. To set custom icon use <a href="http://developer.android.com/reference/android/widget/TextView.html#setError(java.lang.CharSequence,%20android.graphics.drawable.Drawable">TextView.setError(CharSequence, Drawable)</a>) method when setting an error.
+Icon sizes must be 20 x 20 dp size. It is 15 x 15 pixels in ldpi mode, 20 x 20 pixels in mdpi, 30 x 30 pixels in hdpi and 40 x 40 in xhdpi. Lets set an error to one of the views using custom error drawable. To do it I modified the code to set custom drawable to checkbox when calling setError() method:</p>
+
+<p><code>java
+editText.setError(getString(R.string.must_be_filled));
+Drawable customErrorDrawable = getResources().getDrawable(R.drawable.custom_error);
+customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+chbx.setError(getString(R.string.must_be_checked), customErrorDrawable);
+radionBtn.setError(getString(R.string.must_be_checked));
+btn.setError(getString(R.string.unknown_error));
+</code></p>
+
+<p>Here I set custom error icon to a checkbox. Note that you need to set bounds to your drawable otherwise it will not be drawn.
+Now checkbox has different error indicator:<br/>
+<img class="center" src="/images/2013/01/18/form-with-custom-error-drawable.png" title="&lsquo;Form with Custom Error Drawable&rsquo; &lsquo;Form with Custom Error Drawable&rsquo;" ></p>
+
+<p>That is how to indicate incorrectly filled fields.
+Android project used in this post can be found in my <a href="https://github.com/J-rooft/android-forms-with-error-indicators">Github repository</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Handling android display rotation]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/"/>
+    <updated>2012-12-18T21:52:39+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation</id>
+    <content type="html"><![CDATA[<p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
+
+<!-- more -->
+
+
+<p>Android will help you in it. For example, EditText content is restored automatically. But not all views do the same. If the app dynamically changes Button text or maybe TextView text it is easy to restore this text too. Just include to this view declaration in XML the following line:</p>
+
+<p>``` xml</p>
+
+<pre><code>android:freezesText="true"
+</code></pre>
+
+<p>```</p>
+
+<p>Text in these views will be restored in <code>Activity.onResume()</code> or <code>Fragment.onViewStateRestored(Bundle)</code> methods.</p>
+
+<p>But if you want to persist some objects or primitives you have to override <code>onSaveInstanceState(Bundle)</code> method. This method receives Bundle as a parameter. To store value in it call one of appropriate put* methods. For example, to store integer value call <code>putInt(String, Integer)</code> method and pass key for this value and the value itself.</p>
+
+<p>``` java</p>
+
+<pre><code>@Override
+protected void onSaveInstanceState(Bundle outState) {
+    outState.putInt(KEY_FOR_ID, id);
+
+    super.onSaveInstanceState(outState);
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Storing objects is a little bit more complicated. It requires stored objects to implement <code>Serializable</code> or <code>Parcelable</code>. If it does then call <code>putSerializable(String, Serializable)</code> or <code>putParcelable(String, Parcelable)</code> method. When activity or fragment is recreated Bundle object with stored values will be passed to the following methods: <code>Activity.onCreate(Bundle)</code>, <code>Activity.onRestoreInstanceState(Bundle)</code>, <code>Fragment.onCreate(Bundle)</code>, <code>Fragment.onCreateView(LayoutInflater, ViewGroup, Bundle)</code>, and <code>Fragment.onActivityCreated(Bundle)</code>. To get value from the Bundle call an appropriate get* method and pass key you used to store the value to it, e.g. <code>Bundle.getInt(String)</code>.</p>
+
+<p>``` java</p>
+
+<pre><code>@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // some lines are omitted
+
+    if (savedInstanceState != null) {
+        // if not null then this activity (fragment) is being recreated
+        id = savedInstanceState.getInt(KEY_FOR_ID);
+    }
+}
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

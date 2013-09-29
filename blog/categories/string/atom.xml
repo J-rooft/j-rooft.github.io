@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: string | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/string/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using spannable strings in android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/"/>
+    <updated>2013-05-28T13:47:52+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android</id>
+    <content type="html"><![CDATA[<p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
+<img class="center" src="/images/2013/05/28/colored.png"></p>
+
+<!-- more -->
+
+
+<p>If you want to change text appearance dynamically then spans are more preferred then html pages. Spannable strings are easy to create and use. We must simply create and assign a span to a part of a string. I&rsquo;ll create an app demonstrating it. Initially on the screen there is a TextView with three buttons. First two buttons change text appearance by using spans and the third button clears any previously created spans.<br/>
+<img class="center" src="/images/2013/05/28/initial.png"></p>
+
+<p>In this app I use only two spans: <a href="http://developer.android.com/reference/android/text/style/ForegroundColorSpan.html">ForegroundColorSpan</a> to make red text and <a href="http://developer.android.com/reference/android/text/style/UnderlineSpan.html">UnderlineSpan</a> to underline text. And of course there are a way more spans you can use. Let me describe some of them:</p>
+
+<ul>
+<li><a href="http://developer.android.com/reference/android/text/style/RelativeSizeSpan.html">RelativeSizeSpan</a> to change text size</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StrikethroughSpan.html">StrikethroughSpan</a> to strike through the text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/URLSpan.html">URLSpan</a> to make URLs in text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/ClickableSpan.html">ClickableSpan</a> to make text clickable (onClick method will be called)</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StyleSpan.html">StyleSpan</a> to make text bold and/or italic</li>
+<li>etc.</li>
+</ul>
+
+
+<p>Other spans can be known by looking at subclasses of <a href="http://developer.android.com/reference/android/text/ParcelableSpan.html">ParcelableSpan</a>.</p>
+
+<p>ClickableSpan and URLSpan require movement method to be set:
+<code>java
+textView.setMovementMethod(LinkMovementMethod.getInstance());
+</code></p>
+
+<p>Spannable text is created by assigning spans to spannable string. So first we must create a string with text that is able to apply spans. Let&rsquo;s use <a href="http://developer.android.com/reference/android/text/SpannableString.html">SpannableString</a> for it:
+<code>java
+String text = "Words in this sentence can be colored in red or underlined.";
+SpannableString spannable = new SpannableString(text);
+</code></p>
+
+<p>Now when we have spannable string we can assign spans to it by calling <a href="http://developer.android.com/reference/android/text/Spannable.html#setSpan(java.lang.Object,%20int,%20int,%20int">Spannable.setSpan(Object span, int start, int end, int flags)</a>) method. First parameter in this method is simply one of spans described earlier. Second and third parameters specify boundaries of span. The last parameter is flag to specify how text should behave when spannable string changes. It is not used for static text and we can set it to 0.</p>
+
+<p>To remove previously added span call <a href="http://developer.android.com/reference/android/text/Spannable.html#removeSpan(java.lang.Object">Spannable.removeSpan(Object span)</a>) on it.</p>
+
+<p>Once spannable string is ready we can assign it to TextView. You must tell TextView that string you created is spannable string:
+<code>java
+textView.setText(spannableText, BufferType.SPANNABLE);
+</code></p>
+
+<p>Spannable strings are simple and easy to use feature that helps you to make your app nicer.</p>
+
+<p>As always app source code is available on <a href="https://github.com/J-rooft/Spannable-Strings">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

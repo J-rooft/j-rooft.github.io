@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Git submodules - Nocturnal Development Blog</title>
+  <meta name="author" content="Ivan Davletshin">
+
+  
+  <meta name="description" content="When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it. For example, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://nocturnaldev.com/blog/2012/12/16/git-submodules/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nocturnal Development Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44439506-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:nocturnaldev.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Nocturnal Development Blog
+        </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Git Submodules</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-16T12:48:53+04:00" pubdate data-updated="true">Dec 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it.</p>
+
+<!-- more -->
+
+
+<p>For example, recently I added ActionBarSherlock to one of my projects. ActionBarSherlock cannot be included as a jar file because it has its own resources. Resources are not included in jars. So to include ActionBarSherlock you have to add it as Android library. To do it do the following.</p>
+
+<ol>
+<li>
+Go to the project folder and issue the following command:
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git submodule add git://github.com/JakeWharton/ActionBarSherlock.git
+</span></code></pre></td></tr></table></div></figure>
+</li><li>
+Wait until the library downloaded and then modify `.gitmodules` file by adding `&#8221;ignore = dirty&#8221;` line to just added submodule
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cat .gitmodules
+</span><span class='line'><span class="o">[</span>submodule <span class="s2">&quot;ActionBarSherlock&quot;</span><span class="o">]</span>
+</span><span class='line'>  <span class="nv">path</span> <span class="o">=</span> ActionBarSherlock
+</span><span class='line'>  <span class="nv">url</span> <span class="o">=</span> git://github.com/JakeWharton/ActionBarSherlock.git
+</span><span class='line'>  <span class="nv">ignore</span> <span class="o">=</span> dirty
+</span></code></pre></td></tr></table></div></figure>
+
+By doing this you tell git that you do not want to know whether the library project (git submodule) was modified.
+
+</li><li>
+Commit your changes.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;Added ActionBarSherlock as git submodule&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+</li><li>
+And if you are using eclipse just import ActionBarSherlock project.  
+<img class="center" src="/images/2012/12/16/eclipse-import.png" title="'Import project'" >
+
+Choose &#8220;Existing Android Code Into Workspace&#8221; during import and check the library. There is no need to import ActionBarSherlock samples.  
+<img class="center" src="/images/2012/12/16/eclipse-import-project-1.png" title="'Existing Android code into workspace'" >
+
+<img class="center" src="/images/2012/12/16/eclipse-import-project-2.png" title="'Check library'" >
+
+And then tell your project that you want to use ActionBarSherlock as a library.  
+<img class="center" src="/images/2012/12/16/eclipse-project-properties.png" title="'Project properties'" >
+</li>
+</ol>
+
+
+<p>If you are cloning some project with git submodules within it you need to tell git about it.</p>
+
+<p>Just run the following commands after checkout:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git submodule init
+</span><span class='line'><span class="nv">$ </span>git submodule update
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To stop using a submodule just follow these steps which I found <a href="http://stackoverflow.com/a/1260982">here</a>:</p>
+
+<ol>
+<li>Delete the relevant section from the <code>.gitmodules</code> file.</li>
+<li>Delete the relevant section from <code>.git/config</code>.</li>
+<li>Run <code>git rm --cached path_to_submodule</code> (no trailing slash).</li>
+<li>Commit and delete the now untracked submodule files.</li>
+</ol>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ivan Davletshin</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-16T12:48:53+04:00" pubdate data-updated="true">Dec 16<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/git/'>git</a>, <a class='category' href='/blog/categories/library/'>library</a>, <a class='category' href='/blog/categories/submodule/'>submodule</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://nocturnaldev.com/blog/2012/12/16/git-submodules/" data-via="" data-counturl="http://nocturnaldev.com/blog/2012/12/16/git-submodules/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/" title="Previous Post: How to use LocalBroadcastManager in Android">&laquo; How to use LocalBroadcastManager in Android</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/18/handling-android-display-rotation/" title="Next Post: Handling android display rotation">Handling android display rotation &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <div style="margin-top:15px; "><img style="" class="right" src="/images/my-photo.png"/>
+  <p>My name is Ivan Davletshin. I am a software developer who likes what he does. <a href="/about-me">More...</a></p>
+  </div>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using spannable strings in android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/J-rooft">@J-rooft</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'J-rooft',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/102996800827400684904?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - 2013 - <a href="/about-me">Ivan Davletshin</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Hosted on <a href="http://pages.github.com/">GitHub Pages</a> - Theme by <a href="https://github.com/wallace/justin-kelly-theme">Justin Kelly</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nocturnaldev';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://nocturnaldev.com/blog/2012/12/16/git-submodules/';
+        var disqus_url = 'http://nocturnaldev.com/blog/2012/12/16/git-submodules/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

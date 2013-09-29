@@ -1,1 +1,629 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nocturnal Development Blog</title>
+  <meta name="author" content="Ivan Davletshin">
+
+  
+  <meta name="description" content="Android offers a convenient way to run tasks at specific time via AlarmManager. If you want to pass some data to this task you should store it in &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://nocturnaldev.com/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nocturnal Development Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44439506-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:nocturnaldev.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Nocturnal Development Blog
+        </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-01T23:42:35+04:00" pubdate data-updated="true">Sep 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
+<code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
+<img src="/images/2013/09/01/classnotfoundexception-log.png"></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/09/01/parcelable-in-pendingintent/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using Spannable Strings in Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-28T13:47:52+04:00" pubdate data-updated="true">May 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
+<img class="center" src="/images/2013/05/28/colored.png"></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/28/using-spannable-strings-in-android/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-27T19:30:06+04:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/27/using-viewstub-on-android/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-14T01:35:36+04:00" pubdate data-updated="true">Feb 14<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/02/14/using-quantity-strings-in-android/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-18T15:19:20+04:00" pubdate data-updated="true">Jan 18<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/18/handling-android-display-rotation/">Handling Android Display Rotation</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-18T21:52:39+04:00" pubdate data-updated="true">Dec 18<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/12/18/handling-android-display-rotation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/16/git-submodules/">Git Submodules</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-16T12:48:53+04:00" pubdate data-updated="true">Dec 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/12/16/git-submodules/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/">How to Use LocalBroadcastManager in Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-13T00:30:05+04:00" pubdate data-updated="true">Nov 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/22/how-to-start-writing-for-android/">How to Start Writing for Android</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T23:27:58+04:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Everyone who wants to write for android have to know Java. XML is used to create resources. Also android native development kit (NDK) allows you to use C/C++. You may say that there are frameworks which we can use to develop android apps without knowing Java. That&rsquo;s true. But this method has some limitations. For example, you will not be able to use the latest available android API right after it was released. This happens because developers of such frameworks need some time to be updated to support new API features.</p>
+
+<p>A good place to start learning android is <a href="http://developer.android.com/training/index.html">training</a> on Android developers site. Android developers is also a good reference site. A good book to learn android is <a href="http://commonsware.com/">The Busy Coder&rsquo;s Guide to Android Development</a> by Mark Murphy. If you buy this book you will receive updates during the next 12 months (usually every month). It&rsquo;s good because android is very fast growing platform and books that were published a year or more ago is outdated now. Also I&rsquo;ve read a good comments about <a href="http://www.amazon.com/Professional-Android-Application-Development-Guides/dp/1118102274/">Professional Android 4 Application Development</a> by Reto Meier.</p>
+
+<p>And finally, if you want to know even more about android you need to find blogs on this topic and subscribe to these blogs. Also I find interesting android developers <a href="http://www.youtube.com/user/androiddevelopers">youtube channel</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/21/foreword/">Foreword</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-21T16:58:46+04:00" pubdate data-updated="true">Oct 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone, I&rsquo;m starting a new blog where I&rsquo;m going to tell about different programming topics.</p>
+
+<p>You may ask me why I called this blog &ldquo;Nocturnal Development Blog&rdquo;? I called it this way because it&rsquo;s easier to develop your programs at night. No one can disturb you during this time. This period of time becomes even more important once you get a child. It&rsquo;s like your free time.</p>
+
+<p>A few words about what will be in this blog. Currently I&rsquo;m working as an android developer, so most of the posts will be about different aspects of android development. As you may know Java programming language is used to develop android applications therefore some of the posts can tell about this programming language. Also I can write about any other programming topic. For example, some time ago I was told to develop a feature for a server using Grails. So I started to learn Groovy/Grails. I&rsquo;m open to interesting new technologies and can start to learn them any time.</p>
+
+<p>That&rsquo;s all for now. Hope to see you as my reader.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <div style="margin-top:15px; "><img style="" class="right" src="/images/my-photo.png"/>
+  <p>My name is Ivan Davletshin. I am a software developer who likes what he does. <a href="/about-me">More&#8230;</a></p>
+  </div>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using spannable strings in android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/J-rooft">@J-rooft</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'J-rooft',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/102996800827400684904?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - 2013 - <a href="/about-me">Ivan Davletshin</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Hosted on <a href="http://pages.github.com/">GitHub Pages</a> - Theme by <a href="https://github.com/wallace/justin-kelly-theme">Justin Kelly</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nocturnaldev';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using Quantity Strings in Android - Nocturnal Development Blog</title>
+  <meta name="author" content="Ivan Davletshin">
+
+  
+  <meta name="description" content="There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nocturnal Development Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44439506-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:nocturnaldev.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Nocturnal Development Blog
+        </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using Quantity Strings in Android</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-14T01:35:36+04:00" pubdate data-updated="true">Feb 14<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
+
+<!-- more -->
+
+
+<p>Android internally uses language plural rules as in this <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a>. According to it tags are used to represent categories. For English language there are 2 tags: <code>one</code> and <code>other</code>.
+To show how plurals work I will create a sample application.
+Android plurals stored in string resources as regular strings. In <code>res/values/stings.xml</code> I added the following lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;resources&gt;</span>
+</span><span class='line'>    <span class="c">&lt;!-- ... --&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&quot;itemsSelected&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;one&quot;</span><span class="nt">&gt;</span>1 item selected<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;other&quot;</span><span class="nt">&gt;</span>%d items selected<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/plurals&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/resources&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This plurlas can be received via <a href="http://developer.android.com/reference/android/content/res/Resources.html#getQuantityString(int,%20int,%20java.lang.Object...">getResources().getQuantityString (int id, int quantity, Object&hellip; formatArgs)</a>) method. So to get the right string I call this method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">String</span> <span class="nf">getSelectedItemsString</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="n">getListView</span><span class="o">().</span><span class="na">getCheckedItemCount</span><span class="o">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nf">getResources</span><span class="o">().</span><span class="na">getQuantityString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">plurals</span><span class="o">.</span><span class="na">itemsSelected</span><span class="o">,</span> <span class="n">count</span><span class="o">,</span> <span class="n">count</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that I passed <code>count</code> twice. This because first parameter is used by android to find the right string and the last parameter will replace <code>%d</code> in the second string.
+Now if I run the app and select some lines I got the following:<br/>
+<img class="center" src="/images/2013/02/13/english-plurals.png" title="Selected items" alt="Selected items"></p>
+
+<p>To add plurals for other languages I created <code>strings.xml</code> file in <code>res/values-cs</code> folder which is used for Czech language. According to the <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a> Czech language has 3 categories, so <code>strings.xml</code> must have the following lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;resources&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&quot;itemsSelected&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;one&quot;</span><span class="nt">&gt;</span>1 položka vybrána<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;few&quot;</span><span class="nt">&gt;</span>%d vybrané položky<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;other&quot;</span><span class="nt">&gt;</span>%d vybraných položek<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/plurals&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/resources&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when device language switched to Czech I got the following:</p>
+
+<div align="center"><img src="/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
+
+
+<p><p>
+Quantity strings make it easier to handle rules of different languages. For example in Russian language there are 4 categories. First category is for 1, 21, 31, &hellip; Second category is for 2-4, 22-24, 32-34 and so on. With plurals it&rsquo;s much more easier to translate your apps to different languages.
+Full source code for the sample app can be found in my <a href="https://github.com/J-rooft/Quantity-Strings">Github repository</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ivan Davletshin</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-14T01:35:36+04:00" pubdate data-updated="true">Feb 14<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/plurals/'>plurals</a>, <a class='category' href='/blog/categories/quantity-strings/'>quantity strings</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/" data-via="" data-counturl="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/" title="Previous Post: Marking Incorrectly Filled Fields in Forms on Android">&laquo; Marking Incorrectly Filled Fields in Forms on Android</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/04/27/using-viewstub-on-android/" title="Next Post: Using ViewStub on Android">Using ViewStub on Android &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <div style="margin-top:15px; "><img style="" class="right" src="/images/my-photo.png"/>
+  <p>My name is Ivan Davletshin. I am a software developer who likes what he does. <a href="/about-me">More...</a></p>
+  </div>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using spannable strings in android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/J-rooft">@J-rooft</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'J-rooft',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/102996800827400684904?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - 2013 - <a href="/about-me">Ivan Davletshin</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Hosted on <a href="http://pages.github.com/">GitHub Pages</a> - Theme by <a href="https://github.com/wallace/justin-kelly-theme">Justin Kelly</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nocturnaldev';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/';
+        var disqus_url = 'http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

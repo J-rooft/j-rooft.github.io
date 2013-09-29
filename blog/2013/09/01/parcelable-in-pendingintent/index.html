@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Parcelable in PendingIntent - Nocturnal Development Blog</title>
+  <meta name="author" content="Ivan Davletshin">
+
+  
+  <meta name="description" content="Android offers a convenient way to run tasks at specific time via AlarmManager. If you want to pass some data to this task you should store it in &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nocturnal Development Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44439506-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:nocturnaldev.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Nocturnal Development Blog
+        </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Parcelable in PendingIntent</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-01T23:42:35+04:00" pubdate data-updated="true">Sep 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
+<code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
+<img src="/images/2013/09/01/classnotfoundexception-log.png"></p>
+
+<!-- more -->
+
+
+<p>First lets take a look at the code which causes such problems. I created Data class which implements Parcelable interface and has 2 fields. Now I create an instance of this class and fill it with some values.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Data</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Data</span><span class="o">();</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">setInt</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">setStr</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">[/</span><span class="n">code</span><span class="o">]</span>
+</span><span class='line'><span class="n">This</span> <span class="n">data</span> <span class="n">must</span> <span class="n">be</span> <span class="n">stored</span> <span class="n">in</span> <span class="n">PendingIntent</span> <span class="k">for</span> <span class="n">later</span> <span class="n">use</span> <span class="n">in</span> <span class="n">BroadcastReceiver</span><span class="o">.</span> <span class="n">This</span> <span class="n">is</span> <span class="n">how</span> <span class="n">it</span> <span class="n">can</span> <span class="n">be</span> <span class="nl">done:</span>
+</span><span class='line'><span class="o">[</span><span class="n">code</span> <span class="n">language</span><span class="o">=</span><span class="s">&quot;java&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="c1">// create Intent with data needed</span>
+</span><span class='line'><span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">BROADCAST_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">DATA_EXTRA</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">setExtrasClassLoader</span><span class="o">(</span><span class="n">Data</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// create PendingIntent from this intent and set up alarm</span>
+</span><span class='line'><span class="n">PendingIntent</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">getBroadcast</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">intent</span><span class="o">,</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">FLAG_CANCEL_CURRENT</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">AlarmManager</span> <span class="n">am</span> <span class="o">=</span> <span class="o">(</span><span class="n">AlarmManager</span><span class="o">)</span> <span class="n">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">ALARM_SERVICE</span><span class="o">);</span>
+</span><span class='line'><span class="n">am</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">AlarmManager</span><span class="o">.</span><span class="na">RTC</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">(),</span> <span class="n">pi</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After you run this code in system LogCat there will be an error message:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>443-488/system_process E/Parcel: Class not found when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data, e: java.lang.ClassNotFoundException: com.nocturnaldev.parcelableinpendingintent.Data
+</span><span class='line'>443-488/system_process W/Intent: Failure filling in extras
+</span><span class='line'>        android.os.BadParcelableException: ClassNotFoundException when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data
+</span><span class='line'>        at android.os.Parcel.readParcelable(Parcel.java:2077)
+</span><span class='line'>        at android.os.Parcel.readValue(Parcel.java:1965)
+</span><span class='line'>        at android.os.Parcel.readMapInternal(Parcel.java:2226)
+</span><span class='line'>        at android.os.Bundle.unparcel(Bundle.java:223)
+</span><span class='line'>        at android.os.Bundle.putAll(Bundle.java:303)
+</span><span class='line'>        at android.content.Intent.fillIn(Intent.java:6248)
+</span><span class='line'>        at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:210)
+</span><span class='line'>        at com.android.server.am.PendingIntentRecord.send(PendingIntentRecord.java:192)
+</span><span class='line'>        at android.app.PendingIntent.send(PendingIntent.java:677)
+</span><span class='line'>        at android.app.PendingIntent.send(PendingIntent.java:631)
+</span><span class='line'>        at com.android.server.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:828)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Source code</a> of android clock has an explanation of why this happens: &ldquo;The AlarmManager adds extra data to this Intent which causes it to inflate. Since the remote process does not know about the Alarm class, it throws a ClassNotFoundException.&rdquo;</p>
+
+<p>Also there is a <a href="https://code.google.com/p/android/issues/detail?id=6822">bug report</a> created for this issue.</p>
+
+<p>Fortunately this problem can be overcome by making byte array from your Parcelable object and passing it to PendingIntent.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// First create Parcel and write your data to it</span>
+</span><span class='line'><span class="n">Parcel</span> <span class="n">parcel</span> <span class="o">=</span> <span class="n">Parcel</span><span class="o">.</span><span class="na">obtain</span><span class="o">();</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">writeToParcel</span><span class="o">(</span><span class="n">parcel</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">setDataPosition</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// now create Intent and store your parcel in it</span>
+</span><span class='line'><span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">BROADCAST_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">MARSHALLED_DATA_EXTRA</span><span class="o">,</span> <span class="n">parcel</span><span class="o">.</span><span class="na">marshall</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// create PendingIntent from this intent and set up alarm</span>
+</span><span class='line'><span class="n">PendingIntent</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">getBroadcast</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">intent</span><span class="o">,</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">FLAG_CANCEL_CURRENT</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">AlarmManager</span> <span class="n">am</span> <span class="o">=</span> <span class="o">(</span><span class="n">AlarmManager</span><span class="o">)</span> <span class="n">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">ALARM_SERVICE</span><span class="o">);</span>
+</span><span class='line'><span class="n">am</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">AlarmManager</span><span class="o">.</span><span class="na">RTC</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">(),</span> <span class="n">pi</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Later when your alarm will be fired you can extract your data:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">byte</span><span class="o">[]</span> <span class="n">byteArrayExtra</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="na">getByteArrayExtra</span><span class="o">(</span><span class="n">MARSHALLED_DATA_EXTRA</span><span class="o">);</span>
+</span><span class='line'><span class="n">Parcel</span> <span class="n">parcel</span> <span class="o">=</span> <span class="n">Parcel</span><span class="o">.</span><span class="na">obtain</span><span class="o">();</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">unmarshall</span><span class="o">(</span><span class="n">byteArrayExtra</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">byteArrayExtra</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">setDataPosition</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'><span class="n">Data</span> <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="na">CREATOR</span><span class="o">.</span><span class="na">createFromParcel</span><span class="o">(</span><span class="n">parcel</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now there are no more errors and LogCat clean and neat.</p>
+
+<p>As always source code of sample app is available on <a href="https://github.com/J-rooft/Parcelable-In-PendingIntent">GitHub</a>.</p>
+
+<p>Used materials:
+Android Clock <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Alarms</a> and <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/AlarmReceiver.java">AlarmReceiver</a> classes.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ivan Davletshin</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-01T23:42:35+04:00" pubdate data-updated="true">Sep 1<span>st</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/classnotfoundexception/'>ClassNotFoundException</a>, <a class='category' href='/blog/categories/pengingintent/'>PengingIntent</a>, <a class='category' href='/blog/categories/alarm/'>alarm</a>, <a class='category' href='/blog/categories/parcelable/'>parcelable</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/" data-via="" data-counturl="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/05/28/using-spannable-strings-in-android/" title="Previous Post: Using spannable strings in android">&laquo; Using spannable strings in android</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <div style="margin-top:15px; "><img style="" class="right" src="/images/my-photo.png"/>
+  <p>My name is Ivan Davletshin. I am a software developer who likes what he does. <a href="/about-me">More...</a></p>
+  </div>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/01/parcelable-in-pendingintent/">Parcelable in PendingIntent</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/28/using-spannable-strings-in-android/">Using spannable strings in android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/using-viewstub-on-android/">Using ViewStub on Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/14/using-quantity-strings-in-android/">Using Quantity Strings in Android</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/">Marking Incorrectly Filled Fields in Forms on Android</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/J-rooft">@J-rooft</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'J-rooft',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/102996800827400684904?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - 2013 - <a href="/about-me">Ivan Davletshin</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Hosted on <a href="http://pages.github.com/">GitHub Pages</a> - Theme by <a href="https://github.com/wallace/justin-kelly-theme">Justin Kelly</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nocturnaldev';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/';
+        var disqus_url = 'http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

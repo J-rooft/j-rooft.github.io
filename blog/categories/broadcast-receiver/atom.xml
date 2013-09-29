@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: broadcast receiver | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/broadcast-receiver/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to use LocalBroadcastManager in Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
+    <updated>2012-11-13T00:30:05+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
+    <content type="html"><![CDATA[<p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
+
+<!-- more -->
+
+
+<p>To register a receiver we need to specify what actions (events) we will be listening to. Every receiver can listen to one or more actions.</p>
+
+<p>When we send a broadcast a receiver gets an instance of Intent class. Using this intent we can know what kind of action happens (in case we listen to more than one action). Also this intent has convenient key-value storage called Bundle.</p>
+
+<p>Here is a simple example of how to register receiver programmatically and send a broadcast with some text to it. First you need create and register a receiver:</p>
+
+<p>``` java</p>
+
+<pre><code>// an action to listen
+public static final String MESSAGE_SENT_ACTION = "com.nocturnaldev.MESSAGE_RECEIVED_ACTION";
+// key to extract a text from bundle
+public static final String MESSAGE_EXTRA = "com.nocturnaldev.MESSAGE_EXTRA";
+
+// make receiver a member variable of a class to be able to unregister it later
+private BroadcastReceiver receiver;
+
+// ...
+
+// in onResume() initialize and register this receiver
+@Override
+protected void onResume() {
+    super.onResume();
+
+    receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            String message = bundle.getString(MESSAGE_EXTRA);
+
+            // do something useful with message
+        }
+    };
+
+    // here we specify MESSAGE_SENT_ACTION as an action 
+    registerReceiver(receiver, new IntentFilter(MESSAGE_SENT_ACTION));
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Now you will be notified when broadcast with aforementioned action will be sent:</p>
+
+<p>``` java</p>
+
+<pre><code>Intent broadcastIntent = new Intent();
+broadcastIntent.setAction(MainActivity.MESSAGE_SENT_ACTION);
+broadcastIntent.putExtra(MainActivity.MESSAGE_EXTRA, "some text");
+sendBroadcast(broadcastIntent);
+</code></pre>
+
+<p>```</p>
+
+<p>When receiver is no longer needed simply call <code>Context.unregisterReceiver</code>:</p>
+
+<p>``` java</p>
+
+<pre><code>@Override
+protected void onPause() {
+    super.onPause();
+
+    if (receiver != null) {
+        unregisterReceiver(receiver);
+        receiver = null;
+    }
+}
+</code></pre>
+
+<p>```</p>
+
+<p>But this code has some important points. According to <a href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">documentation</a> other applications will be able to listen to your broadcasts and send broadcasts to your app. Also sending broadcasts through global broadcast system is not so efficient as sending them through local one. That is why in support package v4 Google introduced LocalBroadcastManager.</p>
+
+<p>If you send and receive broadcasts only inside your app you may start using it. It&rsquo;s not so hard. Instead of using activity&rsquo;s context (as well as service&rsquo;s, application context and so on) you have to obtain an instance of LocalBroadcastManager and use it to register/unregister receiver as well as send broadcasts. Let&rsquo;s see how to modify the previous program to use LocalBroadcastManager. We only need to change 3 lines of code.</p>
+
+<p>Register a receiver:</p>
+
+<p>``` java</p>
+
+<pre><code>LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(MESSAGE_SENT_ACTION));
+</code></pre>
+
+<p>```</p>
+
+<p>Send a broadcast:</p>
+
+<p>``` java</p>
+
+<pre><code>LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+</code></pre>
+
+<p>```</p>
+
+<p>Unregister a receiver:</p>
+
+<p>``` java</p>
+
+<pre><code>LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+</code></pre>
+
+<p>```</p>
+
+<p>After this changes your app will be using system more effectively.</p>
+
+<p>Full source code of examples in this article can be found on github:<br/>
+1. <a href="https://github.com/J-rooft/BroadcastReceiver-Tutorial">BroadcastReceiver-Tutorial</a><br/>
+2. <a href="https://github.com/J-rooft/LocalBroadcastManager-Example">LocalBroadcastManager-Example</a><br/>
+The apps on github starting a background service after tapping on a button. This service notifies our activity when it starts and finishes (after 3 seconds) via broadcasts.</p>
+]]></content>
+  </entry>
+  
+</feed>

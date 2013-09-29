@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: quantity strings | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/quantity-strings/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <updated>2013-02-14T01:35:36+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
+
+<!-- more -->
+
+
+<p>Android internally uses language plural rules as in this <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a>. According to it tags are used to represent categories. For English language there are 2 tags: <code>one</code> and <code>other</code>.
+To show how plurals work I will create a sample application.
+Android plurals stored in string resources as regular strings. In <code>res/values/stings.xml</code> I added the following lines:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;utf-8&rdquo;?>
+<resources></p>
+
+<pre><code>&lt;!-- ... --&gt;
+
+&lt;plurals name="itemsSelected"&gt;
+    &lt;item quantity="one"&gt;1 item selected&lt;/item&gt;
+    &lt;item quantity="other"&gt;%d items selected&lt;/item&gt;
+&lt;/plurals&gt;
+</code></pre>
+
+<p></resources>
+```</p>
+
+<p>This plurlas can be received via <a href="http://developer.android.com/reference/android/content/res/Resources.html#getQuantityString(int,%20int,%20java.lang.Object...">getResources().getQuantityString (int id, int quantity, Object&hellip; formatArgs)</a>) method. So to get the right string I call this method:</p>
+
+<p>``` java
+private String getSelectedItemsString() {</p>
+
+<pre><code>int count = getListView().getCheckedItemCount();
+return getResources().getQuantityString(R.plurals.itemsSelected, count, count);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Notice that I passed <code>count</code> twice. This because first parameter is used by android to find the right string and the last parameter will replace <code>%d</code> in the second string.
+Now if I run the app and select some lines I got the following:<br/>
+<img class="center" src="/images/2013/02/13/english-plurals.png" title="&lsquo;Selected items&rsquo; &lsquo;Selected items&rsquo;" ></p>
+
+<p>To add plurals for other languages I created <code>strings.xml</code> file in <code>res/values-cs</code> folder which is used for Czech language. According to the <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a> Czech language has 3 categories, so <code>strings.xml</code> must have the following lines:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;utf-8&rdquo;?>
+<resources></p>
+
+<pre><code>&lt;plurals name="itemsSelected"&gt;
+    &lt;item quantity="one"&gt;1 položka vybrána&lt;/item&gt;
+    &lt;item quantity="few"&gt;%d vybrané položky&lt;/item&gt;
+    &lt;item quantity="other"&gt;%d vybraných položek&lt;/item&gt;
+&lt;/plurals&gt;
+</code></pre>
+
+<p></resources>
+```</p>
+
+<p>Now when device language switched to Czech I got the following:</p>
+
+<div align="center"><img src="/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
+
+
+<p><p>
+Quantity strings make it easier to handle rules of different languages. For example in Russian language there are 4 categories. First category is for 1, 21, 31, &hellip; Second category is for 2-4, 22-24, 32-34 and so on. With plurals it&rsquo;s much more easier to translate your apps to different languages.
+Full source code for the sample app can be found in my <a href="https://github.com/J-rooft/Quantity-Strings">Github repository</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

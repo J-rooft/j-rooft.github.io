@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Parcelable in PendingIntent]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent/"/>
+    <updated>2013-09-01T23:42:35+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/09/01/parcelable-in-pendingintent</id>
+    <content type="html"><![CDATA[<p>Android offers a convenient way to run tasks at specific time via <a href="http://developer.android.com/reference/android/app/AlarmManager.html">AlarmManager</a>. If you want to pass some data to this task you should store it in <a href="http://developer.android.com/reference/android/content/Intent.html">Intent</a>. If you want to pass your own classes then they should implement <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> interface and persist data in writeToParcel() method. But there is an error message in LogCat when passing your parcelables to PendingIntent:<br/>
+<code>ClassNotFoundException when unmarshalling: YourClass</code><br/>
+<img src="http://nocturnaldev.com/images/2013/09/01/classnotfoundexception-log.png"></p>
+
+<!-- more -->
+
+
+<p>First lets take a look at the code which causes such problems. I created Data class which implements Parcelable interface and has 2 fields. Now I create an instance of this class and fill it with some values.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Data</span> <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Data</span><span class="o">();</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">setInt</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">setStr</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">[/</span><span class="n">code</span><span class="o">]</span>
+</span><span class='line'><span class="n">This</span> <span class="n">data</span> <span class="n">must</span> <span class="n">be</span> <span class="n">stored</span> <span class="n">in</span> <span class="n">PendingIntent</span> <span class="k">for</span> <span class="n">later</span> <span class="n">use</span> <span class="n">in</span> <span class="n">BroadcastReceiver</span><span class="o">.</span> <span class="n">This</span> <span class="n">is</span> <span class="n">how</span> <span class="n">it</span> <span class="n">can</span> <span class="n">be</span> <span class="nl">done:</span>
+</span><span class='line'><span class="o">[</span><span class="n">code</span> <span class="n">language</span><span class="o">=</span><span class="s">&quot;java&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="c1">// create Intent with data needed</span>
+</span><span class='line'><span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">BROADCAST_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">DATA_EXTRA</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">setExtrasClassLoader</span><span class="o">(</span><span class="n">Data</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// create PendingIntent from this intent and set up alarm</span>
+</span><span class='line'><span class="n">PendingIntent</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">getBroadcast</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">intent</span><span class="o">,</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">FLAG_CANCEL_CURRENT</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">AlarmManager</span> <span class="n">am</span> <span class="o">=</span> <span class="o">(</span><span class="n">AlarmManager</span><span class="o">)</span> <span class="n">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">ALARM_SERVICE</span><span class="o">);</span>
+</span><span class='line'><span class="n">am</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">AlarmManager</span><span class="o">.</span><span class="na">RTC</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">(),</span> <span class="n">pi</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After you run this code in system LogCat there will be an error message:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>443-488/system_process E/Parcel: Class not found when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data, e: java.lang.ClassNotFoundException: com.nocturnaldev.parcelableinpendingintent.Data
+</span><span class='line'>443-488/system_process W/Intent: Failure filling in extras
+</span><span class='line'>        android.os.BadParcelableException: ClassNotFoundException when unmarshalling: com.nocturnaldev.parcelableinpendingintent.Data
+</span><span class='line'>        at android.os.Parcel.readParcelable(Parcel.java:2077)
+</span><span class='line'>        at android.os.Parcel.readValue(Parcel.java:1965)
+</span><span class='line'>        at android.os.Parcel.readMapInternal(Parcel.java:2226)
+</span><span class='line'>        at android.os.Bundle.unparcel(Bundle.java:223)
+</span><span class='line'>        at android.os.Bundle.putAll(Bundle.java:303)
+</span><span class='line'>        at android.content.Intent.fillIn(Intent.java:6248)
+</span><span class='line'>        at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:210)
+</span><span class='line'>        at com.android.server.am.PendingIntentRecord.send(PendingIntentRecord.java:192)
+</span><span class='line'>        at android.app.PendingIntent.send(PendingIntent.java:677)
+</span><span class='line'>        at android.app.PendingIntent.send(PendingIntent.java:631)
+</span><span class='line'>        at com.android.server.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:828)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Source code</a> of android clock has an explanation of why this happens: &ldquo;The AlarmManager adds extra data to this Intent which causes it to inflate. Since the remote process does not know about the Alarm class, it throws a ClassNotFoundException.&rdquo;</p>
+
+<p>Also there is a <a href="https://code.google.com/p/android/issues/detail?id=6822">bug report</a> created for this issue.</p>
+
+<p>Fortunately this problem can be overcome by making byte array from your Parcelable object and passing it to PendingIntent.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// First create Parcel and write your data to it</span>
+</span><span class='line'><span class="n">Parcel</span> <span class="n">parcel</span> <span class="o">=</span> <span class="n">Parcel</span><span class="o">.</span><span class="na">obtain</span><span class="o">();</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="na">writeToParcel</span><span class="o">(</span><span class="n">parcel</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">setDataPosition</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// now create Intent and store your parcel in it</span>
+</span><span class='line'><span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">BROADCAST_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">MARSHALLED_DATA_EXTRA</span><span class="o">,</span> <span class="n">parcel</span><span class="o">.</span><span class="na">marshall</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// create PendingIntent from this intent and set up alarm</span>
+</span><span class='line'><span class="n">PendingIntent</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">getBroadcast</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">intent</span><span class="o">,</span> <span class="n">PendingIntent</span><span class="o">.</span><span class="na">FLAG_CANCEL_CURRENT</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">AlarmManager</span> <span class="n">am</span> <span class="o">=</span> <span class="o">(</span><span class="n">AlarmManager</span><span class="o">)</span> <span class="n">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">ALARM_SERVICE</span><span class="o">);</span>
+</span><span class='line'><span class="n">am</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">AlarmManager</span><span class="o">.</span><span class="na">RTC</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">(),</span> <span class="n">pi</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Later when your alarm will be fired you can extract your data:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">byte</span><span class="o">[]</span> <span class="n">byteArrayExtra</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="na">getByteArrayExtra</span><span class="o">(</span><span class="n">MARSHALLED_DATA_EXTRA</span><span class="o">);</span>
+</span><span class='line'><span class="n">Parcel</span> <span class="n">parcel</span> <span class="o">=</span> <span class="n">Parcel</span><span class="o">.</span><span class="na">obtain</span><span class="o">();</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">unmarshall</span><span class="o">(</span><span class="n">byteArrayExtra</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">byteArrayExtra</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span><span class='line'><span class="n">parcel</span><span class="o">.</span><span class="na">setDataPosition</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'><span class="n">Data</span> <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="na">CREATOR</span><span class="o">.</span><span class="na">createFromParcel</span><span class="o">(</span><span class="n">parcel</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now there are no more errors and LogCat clean and neat.</p>
+
+<p>As always source code of sample app is available on <a href="https://github.com/J-rooft/Parcelable-In-PendingIntent">GitHub</a>.</p>
+
+<p>Used materials:
+Android Clock <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/Alarms.java">Alarms</a> and <a href="https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/AlarmReceiver.java">AlarmReceiver</a> classes.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using spannable strings in android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android/"/>
+    <updated>2013-05-28T13:47:52+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/05/28/using-spannable-strings-in-android</id>
+    <content type="html"><![CDATA[<p>Users want to use beautiful and well-designed apps. Appearance of a text in TextView in android can be changed by using html page or creating spannable string. This post tells about the latter. For example, we can modify any part of the string as shown on this screenshot:<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/05/28/colored.png"></p>
+
+<!-- more -->
+
+
+<p>If you want to change text appearance dynamically then spans are more preferred then html pages. Spannable strings are easy to create and use. We must simply create and assign a span to a part of a string. I&rsquo;ll create an app demonstrating it. Initially on the screen there is a TextView with three buttons. First two buttons change text appearance by using spans and the third button clears any previously created spans.<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/05/28/initial.png"></p>
+
+<p>In this app I use only two spans: <a href="http://developer.android.com/reference/android/text/style/ForegroundColorSpan.html">ForegroundColorSpan</a> to make red text and <a href="http://developer.android.com/reference/android/text/style/UnderlineSpan.html">UnderlineSpan</a> to underline text. And of course there are a way more spans you can use. Let me describe some of them:</p>
+
+<ul>
+<li><a href="http://developer.android.com/reference/android/text/style/RelativeSizeSpan.html">RelativeSizeSpan</a> to change text size</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StrikethroughSpan.html">StrikethroughSpan</a> to strike through the text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/URLSpan.html">URLSpan</a> to make URLs in text</li>
+<li><a href="http://developer.android.com/reference/android/text/style/ClickableSpan.html">ClickableSpan</a> to make text clickable (onClick method will be called)</li>
+<li><a href="http://developer.android.com/reference/android/text/style/StyleSpan.html">StyleSpan</a> to make text bold and/or italic</li>
+<li>etc.</li>
+</ul>
+
+
+<p>Other spans can be known by looking at subclasses of <a href="http://developer.android.com/reference/android/text/ParcelableSpan.html">ParcelableSpan</a>.</p>
+
+<p>ClickableSpan and URLSpan require movement method to be set:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">textView</span><span class="o">.</span><span class="na">setMovementMethod</span><span class="o">(</span><span class="n">LinkMovementMethod</span><span class="o">.</span><span class="na">getInstance</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Spannable text is created by assigning spans to spannable string. So first we must create a string with text that is able to apply spans. Let&rsquo;s use <a href="http://developer.android.com/reference/android/text/SpannableString.html">SpannableString</a> for it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">String</span> <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Words in this sentence can be colored in red or underlined.&quot;</span><span class="o">;</span>
+</span><span class='line'><span class="n">SpannableString</span> <span class="n">spannable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SpannableString</span><span class="o">(</span><span class="n">text</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when we have spannable string we can assign spans to it by calling <a href="http://developer.android.com/reference/android/text/Spannable.html#setSpan(java.lang.Object,%20int,%20int,%20int">Spannable.setSpan(Object span, int start, int end, int flags)</a>) method. First parameter in this method is simply one of spans described earlier. Second and third parameters specify boundaries of span. The last parameter is flag to specify how text should behave when spannable string changes. It is not used for static text and we can set it to 0.</p>
+
+<p>To remove previously added span call <a href="http://developer.android.com/reference/android/text/Spannable.html#removeSpan(java.lang.Object">Spannable.removeSpan(Object span)</a>) on it.</p>
+
+<p>Once spannable string is ready we can assign it to TextView. You must tell TextView that string you created is spannable string:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">textView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">spannableText</span><span class="o">,</span> <span class="n">BufferType</span><span class="o">.</span><span class="na">SPANNABLE</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Spannable strings are simple and easy to use feature that helps you to make your app nicer.</p>
+
+<p>As always app source code is available on <a href="https://github.com/J-rooft/Spannable-Strings">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using ViewStub on Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android/"/>
+    <updated>2013-04-27T19:30:06+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/04/27/using-viewstub-on-android</id>
+    <content type="html"><![CDATA[<p>Sometimes in android we want to display a view in some cases and hide it in others. Instead of adding this view and making it hidden at startup we can use <a href="http://developer.android.com/reference/android/view/ViewStub.html">ViewStub</a>.</p>
+
+<!-- more -->
+
+
+<p>As said on android developers site: &ldquo;A ViewStub is an invisible, zero-sized View that can be used to lazily inflate layout resources at runtime&rdquo;. So we can use it to save resources if there is possibility that this view may never be shown. Also ViewStub can be shown later when it needed.</p>
+
+<p>Let&rsquo;s create a simple app that uses ViewStub. It will contain a login screen where a user can enter his credentials or skip this step and start using app without authentication.</p>
+
+<p>A login screen initially will have two buttons to skip login and to enter credentials.<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/04/27/initial-screen.png"></p>
+
+<p>Once the user presses &ldquo;Enter credentials&rdquo; button a new view inflated from ViewStub will appear. This view contains fields to enter login and password. To make login and password fields visible you need to obtain an instance of ViewStub and call <a href="http://developer.android.com/reference/android/view/ViewStub.html#inflate(">inflate()</a>) on it or change its <a href="http://developer.android.com/reference/android/view/ViewStub.html#setVisibility(int">visibility</a>) to View.VISIBLE.<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/04/27/visible-login-password.png"></p>
+
+<p>So ViewStub is very easy to use component of android. Also it is very cheap to create.</p>
+
+<p>As always source code is freely available on <a href="https://github.com/J-rooft/ViewStub-example">GitHub</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Quantity Strings in Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android/"/>
+    <updated>2013-02-14T01:35:36+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/02/14/using-quantity-strings-in-android</id>
+    <content type="html"><![CDATA[<p>There are a lot of languages in the world. Different languages have different rules. For example, in English we say 1 item, but 0 items, 2 items and so on. Here we have 2 categories. But other languages may have different number of categories. For example, Latvian language have 3 categories. In this post I&rsquo;ll show how to handle such situations in Android. Also I&rsquo;ll create a demo project to demonstrate usage of plurals.</p>
+
+<!-- more -->
+
+
+<p>Android internally uses language plural rules as in this <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a>. According to it tags are used to represent categories. For English language there are 2 tags: <code>one</code> and <code>other</code>.
+To show how plurals work I will create a sample application.
+Android plurals stored in string resources as regular strings. In <code>res/values/stings.xml</code> I added the following lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;resources&gt;</span>
+</span><span class='line'>    <span class="c">&lt;!-- ... --&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&quot;itemsSelected&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;one&quot;</span><span class="nt">&gt;</span>1 item selected<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;other&quot;</span><span class="nt">&gt;</span>%d items selected<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/plurals&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/resources&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This plurlas can be received via <a href="http://developer.android.com/reference/android/content/res/Resources.html#getQuantityString(int,%20int,%20java.lang.Object...">getResources().getQuantityString (int id, int quantity, Object&hellip; formatArgs)</a>) method. So to get the right string I call this method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">String</span> <span class="nf">getSelectedItemsString</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="n">getListView</span><span class="o">().</span><span class="na">getCheckedItemCount</span><span class="o">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nf">getResources</span><span class="o">().</span><span class="na">getQuantityString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">plurals</span><span class="o">.</span><span class="na">itemsSelected</span><span class="o">,</span> <span class="n">count</span><span class="o">,</span> <span class="n">count</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that I passed <code>count</code> twice. This because first parameter is used by android to find the right string and the last parameter will replace <code>%d</code> in the second string.
+Now if I run the app and select some lines I got the following:<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/02/13/english-plurals.png" title="Selected items" alt="Selected items"></p>
+
+<p>To add plurals for other languages I created <code>strings.xml</code> file in <code>res/values-cs</code> folder which is used for Czech language. According to the <a href="http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html">table</a> Czech language has 3 categories, so <code>strings.xml</code> must have the following lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;resources&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&quot;itemsSelected&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;one&quot;</span><span class="nt">&gt;</span>1 položka vybrána<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;few&quot;</span><span class="nt">&gt;</span>%d vybrané položky<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;other&quot;</span><span class="nt">&gt;</span>%d vybraných položek<span class="nt">&lt;/item&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/plurals&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/resources&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when device language switched to Czech I got the following:</p>
+
+<div align="center"><img src="http://nocturnaldev.com/images/2013/02/13/1-czech.png" title="Selected items" alt="Czech 1 selected"> <img src="http://nocturnaldev.com/images/2013/02/13/2-czech.png" title="Selected items" alt="Czech 2 selected"> <img src="http://nocturnaldev.com/images/2013/02/13/5-czech.png" title="Selected items" alt="Czech 5 selected"></div>
+
+
+<p><p>
+Quantity strings make it easier to handle rules of different languages. For example in Russian language there are 4 categories. First category is for 1, 21, 31, &hellip; Second category is for 2-4, 22-24, 32-34 and so on. With plurals it&rsquo;s much more easier to translate your apps to different languages.
+Full source code for the sample app can be found in my <a href="https://github.com/J-rooft/Quantity-Strings">Github repository</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Marking Incorrectly Filled Fields in Forms on Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android/"/>
+    <updated>2013-01-18T15:19:20+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2013/01/18/marking-incorrectly-filled-fields-in-forms-on-android</id>
+    <content type="html"><![CDATA[<p>Filling forms in Android is not as easy as on desktops because of a lack of the hardware keyboard. When the user filled a form incorrectly instead of showing a popup the app can somehow highlight wrong items in the form. Android have convenient way of doing this.</p>
+
+<!-- more -->
+
+
+<p>Android TextView and all its subclasses (e.g. Buttons, CheckBoxes) have <a href="http://developer.android.com/reference/android/widget/TextView.html#setError(java.lang.CharSequence">TextView.setError(CharSequence)</a>) method. Use this method when you want to mark a field with incorrect data. Simply call setError() on the view that contains an error.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">editText</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_filled</span><span class="o">));</span>
+</span><span class='line'><span class="n">chbx</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_checked</span><span class="o">));</span>
+</span><span class='line'><span class="n">radionBtn</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_checked</span><span class="o">));</span>
+</span><span class='line'><span class="n">btn</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">unknown_error</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the code above I set error to 4 views. Take a look at the following a screenshot.<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-default-error-drawables.png" title="'Form with default error drawables'" ></p>
+
+<p>As you can see on the screenshot above all 4 views have error indicator but only edittext is able to show error text by default. To allow displaying an error message for other views they must set focusableInTouchMode parameter to true. By doing this you allow the view to get focus and when a user taps on it error message will be shown. You can set this parameter to true in xml by using <a href="http://developer.android.com/reference/android/view/View.html#attr_android:focusableInTouchMode">android:focusableInTouchMode</a> or in code by using <a href="http://developer.android.com/reference/android/view/View.html#setFocusableInTouchMode(boolean">View.setFocusableInTouchMode(boolean)</a>). I prefer to set it to true only when there is an error and set it to false otherwise. This is because in this mode user needs to make 2 taps to change the checked state or press the button: first tap to focus a view and second tap to interact with it.<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-default-error-drawables-focusable.png" title="'Form with default error drawables focusable'" ></p>
+
+<p>Also Android allows us to change error icon. To set custom icon use <a href="http://developer.android.com/reference/android/widget/TextView.html#setError(java.lang.CharSequence,%20android.graphics.drawable.Drawable">TextView.setError(CharSequence, Drawable)</a>) method when setting an error.
+Icon sizes must be 20 x 20 dp size. It is 15 x 15 pixels in ldpi mode, 20 x 20 pixels in mdpi, 30 x 30 pixels in hdpi and 40 x 40 in xhdpi. Lets set an error to one of the views using custom error drawable. To do it I modified the code to set custom drawable to checkbox when calling setError() method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">editText</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_filled</span><span class="o">));</span>
+</span><span class='line'><span class="n">Drawable</span> <span class="n">customErrorDrawable</span> <span class="o">=</span> <span class="n">getResources</span><span class="o">().</span><span class="na">getDrawable</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">custom_error</span><span class="o">);</span>
+</span><span class='line'><span class="n">customErrorDrawable</span><span class="o">.</span><span class="na">setBounds</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">customErrorDrawable</span><span class="o">.</span><span class="na">getIntrinsicWidth</span><span class="o">(),</span> <span class="n">customErrorDrawable</span><span class="o">.</span><span class="na">getIntrinsicHeight</span><span class="o">());</span>
+</span><span class='line'><span class="n">chbx</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_checked</span><span class="o">),</span> <span class="n">customErrorDrawable</span><span class="o">);</span>
+</span><span class='line'><span class="n">radionBtn</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">must_be_checked</span><span class="o">));</span>
+</span><span class='line'><span class="n">btn</span><span class="o">.</span><span class="na">setError</span><span class="o">(</span><span class="n">getString</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">unknown_error</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here I set custom error icon to a checkbox. Note that you need to set bounds to your drawable otherwise it will not be drawn.
+Now checkbox has different error indicator:<br/>
+<img class="center" src="http://nocturnaldev.com/images/2013/01/18/form-with-custom-error-drawable.png" title="Form with Custom Error Drawable" alt="Form with Custom Error Drawable"></p>
+
+<p>That is how to indicate incorrectly filled fields.
+Android project used in this post can be found in my <a href="https://github.com/J-rooft/android-forms-with-error-indicators">Github repository</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Handling android display rotation]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/"/>
+    <updated>2012-12-18T21:52:39+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation</id>
+    <content type="html"><![CDATA[<p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
+
+<!-- more -->
+
+
+<p>Android will help you in it. For example, EditText content is restored automatically. But not all views do the same. If the app dynamically changes Button text or maybe TextView text it is easy to restore this text too. Just include to this view declaration in XML the following line:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>android:freezesText=&quot;true&quot;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Text in these views will be restored in <code>Activity.onResume()</code> or <code>Fragment.onViewStateRestored(Bundle)</code> methods.</p>
+
+<p>But if you want to persist some objects or primitives you have to override <code>onSaveInstanceState(Bundle)</code> method. This method receives Bundle as a parameter. To store value in it call one of appropriate put* methods. For example, to store integer value call <code>putInt(String, Integer)</code> method and pass key for this value and the value itself.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onSaveInstanceState</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">outState</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">outState</span><span class="o">.</span><span class="na">putInt</span><span class="o">(</span><span class="n">KEY_FOR_ID</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onSaveInstanceState</span><span class="o">(</span><span class="n">outState</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Storing objects is a little bit more complicated. It requires stored objects to implement <code>Serializable</code> or <code>Parcelable</code>. If it does then call <code>putSerializable(String, Serializable)</code> or <code>putParcelable(String, Parcelable)</code> method. When activity or fragment is recreated Bundle object with stored values will be passed to the following methods: <code>Activity.onCreate(Bundle)</code>, <code>Activity.onRestoreInstanceState(Bundle)</code>, <code>Fragment.onCreate(Bundle)</code>, <code>Fragment.onCreateView(LayoutInflater, ViewGroup, Bundle)</code>, and <code>Fragment.onActivityCreated(Bundle)</code>. To get value from the Bundle call an appropriate get* method and pass key you used to store the value to it, e.g. <code>Bundle.getInt(String)</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// some lines are omitted</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">savedInstanceState</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// if not null then this activity (fragment) is being recreated</span>
+</span><span class='line'>        <span class="n">id</span> <span class="o">=</span> <span class="n">savedInstanceState</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="n">KEY_FOR_ID</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Git submodules]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/12/16/git-submodules/"/>
+    <updated>2012-12-16T12:48:53+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/12/16/git-submodules</id>
+    <content type="html"><![CDATA[<p>When you need to add a library to a project in git repository you can use git submodules for it. Read in this post how you can do it.</p>
+
+<!-- more -->
+
+
+<p>For example, recently I added ActionBarSherlock to one of my projects. ActionBarSherlock cannot be included as a jar file because it has its own resources. Resources are not included in jars. So to include ActionBarSherlock you have to add it as Android library. To do it do the following.</p>
+
+<ol>
+<li>
+Go to the project folder and issue the following command:
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git submodule add git://github.com/JakeWharton/ActionBarSherlock.git
+</span></code></pre></td></tr></table></div></figure>
+</li><li>
+Wait until the library downloaded and then modify `.gitmodules` file by adding `&#8221;ignore = dirty&#8221;` line to just added submodule
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cat .gitmodules
+</span><span class='line'><span class="o">[</span>submodule <span class="s2">&quot;ActionBarSherlock&quot;</span><span class="o">]</span>
+</span><span class='line'>  <span class="nv">path</span> <span class="o">=</span> ActionBarSherlock
+</span><span class='line'>  <span class="nv">url</span> <span class="o">=</span> git://github.com/JakeWharton/ActionBarSherlock.git
+</span><span class='line'>  <span class="nv">ignore</span> <span class="o">=</span> dirty
+</span></code></pre></td></tr></table></div></figure>
+
+By doing this you tell git that you do not want to know whether the library project (git submodule) was modified.
+
+</li><li>
+Commit your changes.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;Added ActionBarSherlock as git submodule&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+</li><li>
+And if you are using eclipse just import ActionBarSherlock project.  
+<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import.png" title="'Import project'" >
+
+Choose &#8220;Existing Android Code Into Workspace&#8221; during import and check the library. There is no need to import ActionBarSherlock samples.  
+<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import-project-1.png" title="'Existing Android code into workspace'" >
+
+<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-import-project-2.png" title="'Check library'" >
+
+And then tell your project that you want to use ActionBarSherlock as a library.  
+<img class="center" src="http://nocturnaldev.com/images/2012/12/16/eclipse-project-properties.png" title="'Project properties'" >
+</li>
+</ol>
+
+
+<p>If you are cloning some project with git submodules within it you need to tell git about it.</p>
+
+<p>Just run the following commands after checkout:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git submodule init
+</span><span class='line'><span class="nv">$ </span>git submodule update
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To stop using a submodule just follow these steps which I found <a href="http://stackoverflow.com/a/1260982">here</a>:</p>
+
+<ol>
+<li>Delete the relevant section from the <code>.gitmodules</code> file.</li>
+<li>Delete the relevant section from <code>.git/config</code>.</li>
+<li>Run <code>git rm --cached path_to_submodule</code> (no trailing slash).</li>
+<li>Commit and delete the now untracked submodule files.</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to use LocalBroadcastManager in Android]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android/"/>
+    <updated>2012-11-13T00:30:05+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/11/13/how-to-use-localbroadcastmanager-in-android</id>
+    <content type="html"><![CDATA[<p>Broadcast messages are widely used in android, for example when you want to know current buttery level or scan for wifi networks you have to set up a broadcast receiver. There are two ways to set up broadcast receiver. You can declare them in the manifest file (AndroidManifest.xml) or you can register receiver during runtime and unregister it when it is no longer needed. The main difference is that receiver declared in manifest will receive messages even when the app is not running.</p>
+
+<!-- more -->
+
+
+<p>To register a receiver we need to specify what actions (events) we will be listening to. Every receiver can listen to one or more actions.</p>
+
+<p>When we send a broadcast a receiver gets an instance of Intent class. Using this intent we can know what kind of action happens (in case we listen to more than one action). Also this intent has convenient key-value storage called Bundle.</p>
+
+<p>Here is a simple example of how to register receiver programmatically and send a broadcast with some text to it. First you need create and register a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// an action to listen</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MESSAGE_SENT_ACTION</span> <span class="o">=</span> <span class="s">&quot;com.nocturnaldev.MESSAGE_RECEIVED_ACTION&quot;</span><span class="o">;</span>
+</span><span class='line'><span class="c1">// key to extract a text from bundle</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MESSAGE_EXTRA</span> <span class="o">=</span> <span class="s">&quot;com.nocturnaldev.MESSAGE_EXTRA&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// make receiver a member variable of a class to be able to unregister it later</span>
+</span><span class='line'><span class="kd">private</span> <span class="n">BroadcastReceiver</span> <span class="n">receiver</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// in onResume() initialize and register this receiver</span>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onResume</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onResume</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">receiver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BroadcastReceiver</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nd">@Override</span>
+</span><span class='line'>        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onReceive</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">Intent</span> <span class="n">intent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">Bundle</span> <span class="n">bundle</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="na">getExtras</span><span class="o">();</span>
+</span><span class='line'>            <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">MESSAGE_EXTRA</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// do something useful with message</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// here we specify MESSAGE_SENT_ACTION as an action </span>
+</span><span class='line'>    <span class="n">registerReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">,</span> <span class="k">new</span> <span class="n">IntentFilter</span><span class="o">(</span><span class="n">MESSAGE_SENT_ACTION</span><span class="o">));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you will be notified when broadcast with aforementioned action will be sent:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Intent</span> <span class="n">broadcastIntent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">();</span>
+</span><span class='line'><span class="n">broadcastIntent</span><span class="o">.</span><span class="na">setAction</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">MESSAGE_SENT_ACTION</span><span class="o">);</span>
+</span><span class='line'><span class="n">broadcastIntent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">MESSAGE_EXTRA</span><span class="o">,</span> <span class="s">&quot;some text&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">sendBroadcast</span><span class="o">(</span><span class="n">broadcastIntent</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>When receiver is no longer needed simply call <code>Context.unregisterReceiver</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onPause</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onPause</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">receiver</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">unregisterReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">receiver</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But this code has some important points. According to <a href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">documentation</a> other applications will be able to listen to your broadcasts and send broadcasts to your app. Also sending broadcasts through global broadcast system is not so efficient as sending them through local one. That is why in support package v4 Google introduced LocalBroadcastManager.</p>
+
+<p>If you send and receive broadcasts only inside your app you may start using it. It&rsquo;s not so hard. Instead of using activity&rsquo;s context (as well as service&rsquo;s, application context and so on) you have to obtain an instance of LocalBroadcastManager and use it to register/unregister receiver as well as send broadcasts. Let&rsquo;s see how to modify the previous program to use LocalBroadcastManager. We only need to change 3 lines of code.</p>
+
+<p>Register a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">registerReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">,</span> <span class="k">new</span> <span class="n">IntentFilter</span><span class="o">(</span><span class="n">MESSAGE_SENT_ACTION</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Send a broadcast:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">sendBroadcast</span><span class="o">(</span><span class="n">broadcastIntent</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Unregister a receiver:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LocalBroadcastManager</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">unregisterReceiver</span><span class="o">(</span><span class="n">receiver</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After this changes your app will be using system more effectively.</p>
+
+<p>Full source code of examples in this article can be found on github:<br/>
+1. <a href="https://github.com/J-rooft/BroadcastReceiver-Tutorial">BroadcastReceiver-Tutorial</a><br/>
+2. <a href="https://github.com/J-rooft/LocalBroadcastManager-Example">LocalBroadcastManager-Example</a><br/>
+The apps on github starting a background service after tapping on a button. This service notifies our activity when it starts and finishes (after 3 seconds) via broadcasts.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to start writing for android]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android/"/>
+    <updated>2012-10-22T23:27:58+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/10/22/how-to-start-writing-for-android</id>
+    <content type="html"><![CDATA[<p>Everyone who wants to write for android have to know Java. XML is used to create resources. Also android native development kit (NDK) allows you to use C/C++. You may say that there are frameworks which we can use to develop android apps without knowing Java. That&rsquo;s true. But this method has some limitations. For example, you will not be able to use the latest available android API right after it was released. This happens because developers of such frameworks need some time to be updated to support new API features.</p>
+
+<p>A good place to start learning android is <a href="http://developer.android.com/training/index.html">training</a> on Android developers site. Android developers is also a good reference site. A good book to learn android is <a href="http://commonsware.com/">The Busy Coder&rsquo;s Guide to Android Development</a> by Mark Murphy. If you buy this book you will receive updates during the next 12 months (usually every month). It&rsquo;s good because android is very fast growing platform and books that were published a year or more ago is outdated now. Also I&rsquo;ve read a good comments about <a href="http://www.amazon.com/Professional-Android-Application-Development-Guides/dp/1118102274/">Professional Android 4 Application Development</a> by Reto Meier.</p>
+
+<p>And finally, if you want to know even more about android you need to find blogs on this topic and subscribe to these blogs. Also I find interesting android developers <a href="http://www.youtube.com/user/androiddevelopers">youtube channel</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Foreword]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/10/21/foreword/"/>
+    <updated>2012-10-21T16:58:46+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/10/21/foreword</id>
+    <content type="html"><![CDATA[<p>Hi everyone, I&rsquo;m starting a new blog where I&rsquo;m going to tell about different programming topics.</p>
+
+<p>You may ask me why I called this blog &ldquo;Nocturnal Development Blog&rdquo;? I called it this way because it&rsquo;s easier to develop your programs at night. No one can disturb you during this time. This period of time becomes even more important once you get a child. It&rsquo;s like your free time.</p>
+
+<p>A few words about what will be in this blog. Currently I&rsquo;m working as an android developer, so most of the posts will be about different aspects of android development. As you may know Java programming language is used to develop android applications therefore some of the posts can tell about this programming language. Also I can write about any other programming topic. For example, some time ago I was told to develop a feature for a server using Grails. So I started to learn Groovy/Grails. I&rsquo;m open to interesting new technologies and can start to learn them any time.</p>
+
+<p>That&rsquo;s all for now. Hope to see you as my reader.</p>
+]]></content>
+  </entry>
+  
+</feed>

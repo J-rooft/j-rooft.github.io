@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rotation | Nocturnal Development Blog]]></title>
+  <link href="http://nocturnaldev.com/blog/categories/rotation/atom.xml" rel="self"/>
+  <link href="http://nocturnaldev.com/"/>
+  <updated>2013-09-29T14:06:01+04:00</updated>
+  <id>http://nocturnaldev.com/</id>
+  <author>
+    <name><![CDATA[Ivan Davletshin]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Handling android display rotation]]></title>
+    <link href="http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation/"/>
+    <updated>2012-12-18T21:52:39+04:00</updated>
+    <id>http://nocturnaldev.com/blog/2012/12/18/handling-android-display-rotation</id>
+    <content type="html"><![CDATA[<p>When screen orientation changes android recreates current activity. You as a developer are responsible for keeping data stored in this activity. In this post I will tell how to save the data when screen rotates and then recreate it.</p>
+
+<!-- more -->
+
+
+<p>Android will help you in it. For example, EditText content is restored automatically. But not all views do the same. If the app dynamically changes Button text or maybe TextView text it is easy to restore this text too. Just include to this view declaration in XML the following line:</p>
+
+<p>``` xml</p>
+
+<pre><code>android:freezesText="true"
+</code></pre>
+
+<p>```</p>
+
+<p>Text in these views will be restored in <code>Activity.onResume()</code> or <code>Fragment.onViewStateRestored(Bundle)</code> methods.</p>
+
+<p>But if you want to persist some objects or primitives you have to override <code>onSaveInstanceState(Bundle)</code> method. This method receives Bundle as a parameter. To store value in it call one of appropriate put* methods. For example, to store integer value call <code>putInt(String, Integer)</code> method and pass key for this value and the value itself.</p>
+
+<p>``` java</p>
+
+<pre><code>@Override
+protected void onSaveInstanceState(Bundle outState) {
+    outState.putInt(KEY_FOR_ID, id);
+
+    super.onSaveInstanceState(outState);
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Storing objects is a little bit more complicated. It requires stored objects to implement <code>Serializable</code> or <code>Parcelable</code>. If it does then call <code>putSerializable(String, Serializable)</code> or <code>putParcelable(String, Parcelable)</code> method. When activity or fragment is recreated Bundle object with stored values will be passed to the following methods: <code>Activity.onCreate(Bundle)</code>, <code>Activity.onRestoreInstanceState(Bundle)</code>, <code>Fragment.onCreate(Bundle)</code>, <code>Fragment.onCreateView(LayoutInflater, ViewGroup, Bundle)</code>, and <code>Fragment.onActivityCreated(Bundle)</code>. To get value from the Bundle call an appropriate get* method and pass key you used to store the value to it, e.g. <code>Bundle.getInt(String)</code>.</p>
+
+<p>``` java</p>
+
+<pre><code>@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // some lines are omitted
+
+    if (savedInstanceState != null) {
+        // if not null then this activity (fragment) is being recreated
+        id = savedInstanceState.getInt(KEY_FOR_ID);
+    }
+}
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>
