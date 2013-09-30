@@ -1,0 +1,14 @@
+---
+comments: true
+date: 2012-10-21 12:58:46+00:00
+layout: post
+title: Foreword
+---
+
+Hi everyone, I'm starting a new blog where I'm going to tell about different programming topics.
+
+You may ask me why I called this blog "Nocturnal Development Blog"? I called it this way because it's easier to develop your programs at night. No one can disturb you during this time. This period of time becomes even more important once you get a child. It's like your free time.
+
+A few words about what will be in this blog. Currently I'm working as an android developer, so most of the posts will be about different aspects of android development. As you may know Java programming language is used to develop android applications therefore some of the posts can tell about this programming language. Also I can write about any other programming topic. For example, some time ago I was told to develop a feature for a server using Grails. So I started to learn Groovy/Grails. I'm open to interesting new technologies and can start to learn them any time.
+
+That's all for now. Hope to see you as my reader.
